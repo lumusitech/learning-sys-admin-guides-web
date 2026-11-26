@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "lint:icons": "node scripts/lint-icons.mjs",
+    "lint:language": "node scripts/lint-language.mjs",
     "search:index": "node scripts/build-search-index.mjs",
     "content": "node scripts/prepare-content.mjs"
   },

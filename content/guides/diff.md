@@ -68,7 +68,7 @@ Lo que `diff` **no** hace:
 
 ## 🧠 Modelo mental
 
-Pensá en `diff` como **superponer dos fotos de la misma configuración** y quedarte solo con los píxeles que no coinciden.
+Piensa en `diff` como **superponer dos fotos de la misma configuración** y quedarte solo con los píxeles que no coinciden.
 
 - La foto A es la referencia: el backup, la baseline, el paquete original.
 - La foto B es el presente: el archivo en producción.
@@ -172,18 +172,18 @@ Más verboso que `-u`, pero es POSIX y sirve en sistemas muy antiguos.
 | `Only in d2: f2` | El archivo existe en un árbol y no en el otro |
 | `Binary files a and b differ` | Son binarios: usar `cmp` o checksums |
 
-> ⚠️ Las cabeceras `---`/`+++` incluyen la fecha del archivo. Dos ejecuciones del mismo `diff -u` producen parches con cabeceras distintas. `patch` las ignora, pero si comparás parches entre sí, usá `--label` (GNU/BSD) o filtrá las dos primeras líneas.
+> ⚠️ Las cabeceras `---`/`+++` incluyen la fecha del archivo. Dos ejecuciones del mismo `diff -u` producen parches con cabeceras distintas. `patch` las ignora, pero si comparas parches entre sí, usa `--label` (GNU/BSD) o filtra las dos primeras líneas.
 
 ### 🧪 Salidas simuladas
 
-Tocá cada botón para ver qué imprime `diff` y cómo interpretarlo.
+Toca cada botón para ver qué imprime `diff` y cómo interpretarlo.
 
 :::sim{state=success label="Sin diferencias (exit 0)"}
 ```console
 $ diff -q /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 $
 ```
-No imprimió nada y el **exit code 0** confirma que los archivos son idénticos. En un chequeo automatizado, ese silencio es la señal de éxito: podés encadenar `&& echo ok`.
+No imprimió nada y el **exit code 0** confirma que los archivos son idénticos. En un chequeo automatizado, ese silencio es la señal de éxito: puedes encadenar `&& echo ok`.
 :::
 
 :::sim{state=error label="Con diferencias (exit 1)"}
@@ -217,7 +217,7 @@ $
 | `-y` | Comparación lado a lado | Leer cambios en pantalla ancha |
 | `--label` | Reemplaza el nombre/fecha en la cabecera | Parches reproducibles |
 
-> ⚠️ **Compatibilidad**: en Alpine/BusyBox funcionan `-u`, `-c`, `-q`, `-r`, `-N`, `-i`, `-w`, `-b`, `-B`, `-a`, `-s`. **No** están disponibles `-y`, `-x`, `--label` ni `--color`. Si escribís un script para Alpine, evitá esas opciones.
+> ⚠️ **Compatibilidad**: en Alpine/BusyBox funcionan `-u`, `-c`, `-q`, `-r`, `-N`, `-i`, `-w`, `-b`, `-B`, `-a`, `-s`. **No** están disponibles `-y`, `-x`, `--label` ni `--color`. Si escribes un script para Alpine, evita esas opciones.
 
 ---
 
@@ -225,7 +225,7 @@ $
 
 ### 🧭 1. Config drift: detectar cambios no autorizados
 
-Guardá una baseline y compará después:
+Guarda una baseline y compara después:
 
 ```bash
 cp -a /etc /var/backups/etc-$(date +%F)
@@ -240,7 +240,7 @@ Files /var/backups/etc-2026-11-20/nginx/nginx.conf and /etc/nginx/nginx.conf dif
 Only in /etc/cron.d: backup-rogue
 ```
 
-`-rq` te da el mapa; después abrís el detalle con `-u`:
+`-rq` te da el mapa; después abres el detalle con `-u`:
 
 ```bash
 diff -u /var/backups/etc-2026-11-20/nginx/nginx.conf /etc/nginx/nginx.conf
@@ -296,7 +296,7 @@ Rollback del parche:
 patch -R -p0 nginx.conf.aplicado < nginx.patch
 ```
 
-> `-p0` usa la ruta tal como está en el parche. Si el parche viene de un repo con rutas `a/` y `b/`, usá `-p1`.
+> `-p0` usa la ruta tal como está en el parche. Si el parche viene de un repo con rutas `a/` y `b/`, usa `-p1`.
 
 ### 🔇 6. Filtrar ruido de formato
 
@@ -375,7 +375,7 @@ diff -u /tmp/a.conf /tmp/b.conf
 
 ### 🔬 "¿Este binario cambió?"
 
-`diff` no es la herramienta. Usá checksums:
+`diff` no es la herramienta. Usa checksums:
 
 ```bash
 sha256sum /usr/local/bin/app
@@ -457,7 +457,7 @@ ssh web02 'rpm -qa | sort' > /tmp/web02.txt
 diff -u /tmp/web01.txt /tmp/web02.txt
 ```
 
-> ⚠️ `--label` es GNU/BSD: en Alpine/BusyBox no existe. Para parches portables, quitá las dos primeras líneas del parche con `sed '1,2d'` o aceptá cabeceras con fecha.
+> ⚠️ `--label` es GNU/BSD: en Alpine/BusyBox no existe. Para parches portables, quita las dos primeras líneas del parche con `sed '1,2d'` o aceptá cabeceras con fecha.
 
 ---
 
@@ -467,7 +467,7 @@ diff -u /tmp/web01.txt /tmp/web02.txt
 
 ```bash
 set -e
-diff -q a.conf b.conf     # exit 1 → el script muere acá
+diff -q a.conf b.conf     # exit 1 → el script muere aquí
 ```
 
 Correcto:
@@ -487,7 +487,7 @@ diff app app.bak
 # Binary files app and app.bak differ   ← no dice nada útil
 ```
 
-Usá `cmp -l` o `sha256sum`.
+Usa `cmp -l` o `sha256sum`.
 
 ### 📁 3. Olvidar `-N` y creer que el backup está completo
 
@@ -500,7 +500,7 @@ diff /etc/nginx /etc/nginx.bak
 # Common subdirectories: /etc/nginx/nginx.d and ...
 ```
 
-No compara el contenido. Agregá `-r`.
+No compara el contenido. Agrega `-r`.
 
 ### 🔐 5. Esperar que `diff` detecte cambios de permisos
 
@@ -513,7 +513,7 @@ find /etc -type f -exec stat -c '%a %U %G %n' {} + | sort > /tmp/etc-meta-ahora.
 diff -u /var/lib/baseline/etc-meta.txt /tmp/etc-meta-ahora.txt
 ```
 
-> `stat -c` es GNU/BusyBox; en BSD/macOS usá `stat -f '%Lp %Su %Sg %N'`. Lo que importa es normalizar el formato antes de comparar.
+> `stat -c` es GNU/BusyBox; en BSD/macOS usa `stat -f '%Lp %Su %Sg %N'`. Lo que importa es normalizar el formato antes de comparar.
 
 ### 🩹 6. Aplicar un parche en el nivel de ruta equivocado
 
@@ -522,7 +522,7 @@ patch -p1 < nginx.patch
 # can't find file to patch
 ```
 
-Contá los componentes de la ruta en la cabecera: `a/nginx.conf` → `-p1`; `nginx.conf` → `-p0`.
+Cuenta los componentes de la ruta en la cabecera: `a/nginx.conf` → `-p1`; `nginx.conf` → `-p0`.
 
 ### 🔀 7. Confiar en el orden de líneas
 
@@ -536,15 +536,15 @@ Un `2` no es "hay diferencias": es un error (archivo inexistente, permisos). Un 
 
 ## ✅ Buenas prácticas
 
-- **Guardá la baseline fuera del árbol que comparás**: `/var/lib/baseline/`, no `/etc/baseline/`.
-- **Nombrá la baseline con fecha**: `etc-2026-11-20` permite saber contra qué comparás.
-- **Normalizá antes de comparar**: `sort`, quitar comentarios, quitar timestamps.
-- **`-q` para scripts, `-u` para humanos**: no parsees la salida normal si solo necesitás el veredicto.
-- **Tratá los exit codes como contrato**: `0` igual, `1` distinto, `2` error.
+- **Guarda la baseline fuera del árbol que comparas**: `/var/lib/baseline/`, no `/etc/baseline/`.
+- **Nombra la baseline con fecha**: `etc-2026-11-20` permite saber contra qué comparas.
+- **Normaliza antes de comparar**: `sort`, quitar comentarios, quitar timestamps.
+- **`-q` para scripts, `-u` para humanos**: no parsees la salida normal si solo necesitas el veredicto.
+- **Trata los exit codes como contrato**: `0` igual, `1` distinto, `2` error.
 - **Para binarios, checksums**: `sha256sum` antes y después.
-- **Verificá el parche antes de aplicarlo**: `patch --dry-run` (GNU/BSD) o aplicar sobre una copia.
+- **Verifica el parche antes de aplicarlo**: `patch --dry-run` (GNU/BSD) o aplicar sobre una copia.
 - **Un parche por cambio lógico**: parches enormes son imposibles de revisar y de revertir.
-- **Documentá el rollback**: `patch -R` con el mismo archivo de parche.
+- **Documenta el rollback**: `patch -R` con el mismo archivo de parche.
 
 ---
 

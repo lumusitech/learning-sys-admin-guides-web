@@ -182,7 +182,7 @@ export function initGlobalSearch(): void {
     activeIndex = -1;
 
     if (needle.length === 0) {
-      results.append(message('Escribí para buscar en todas las guías.'));
+      results.append(message('Escribe para buscar en todas las guías.'));
       return;
     }
 

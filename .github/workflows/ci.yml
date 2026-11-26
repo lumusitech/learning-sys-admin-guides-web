@@ -24,6 +24,9 @@ jobs:
       - name: Lint de iconos
         run: pnpm lint:icons
 
+      - name: Lint de idioma (espanol neutro)
+        run: pnpm lint:language
+
       - name: Tipos (astro check)
         run: pnpm check
 
