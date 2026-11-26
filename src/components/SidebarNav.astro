@@ -1,0 +1,116 @@
+---
+import type { NavGroup } from '../lib/nav';
+
+interface Props {
+  nav: NavGroup[];
+  currentId?: string;
+}
+
+const { nav, currentId = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const activeSection = currentId.split('/')[0] ?? '';
+
+const levelTone: Record<string, string> = {
+  Básico: 'bg-emerald-400',
+  Intermedio: 'bg-amber-400',
+  Avanzado: 'bg-rose-400',
+};
+---
+
+<nav aria-label="Navegación principal" class="text-sm">
+  <a
+    href={base}
+    class:list={[
+      'mb-2 flex min-h-11 items-center rounded-lg px-3 font-medium text-fg',
+      currentId === '' && 'bg-surface-2',
+    ]}
+  >
+    Inicio
+  </a>
+
+  {
+    nav.map((group) => (
+      <details open={group.section === activeSection} class="sidebar-group">
+        <summary class="flex min-h-11 cursor-pointer items-center justify-between rounded-lg px-3 font-semibold uppercase tracking-wide text-[11px] text-muted hover:text-fg">
+          <span>{group.label}</span>
+          <span class="text-[10px] font-normal">
+            {group.items.length + group.subgroups.reduce((total, sub) => total + sub.items.length, 0)}
+          </span>
+        </summary>
+
+        <ul class="mb-2 ml-1 border-l border-line pl-2">
+          {group.items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={item.id === currentId ? 'page' : undefined}
+                class:list={[
+                  'flex min-h-10 items-center gap-2 rounded-lg px-2 py-1.5 text-fg/90 hover:bg-surface-2 hover:text-fg',
+                  item.id === currentId && 'bg-surface-2 font-semibold text-fg',
+                ]}
+              >
+                {item.level && (
+                  <span
+                    class:list={['h-1.5 w-1.5 shrink-0 rounded-full', levelTone[item.level] ?? 'bg-muted']}
+                    aria-hidden="true"
+                  />
+                )}
+                <span class="truncate">{item.title}</span>
+              </a>
+            </li>
+          ))}
+
+          {group.subgroups.map((subgroup) => (
+            <li>
+              <details class="sidebar-group">
+                <summary class="flex min-h-10 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-muted hover:bg-surface-2 hover:text-fg">
+                  <span class="text-[10px]">▸</span>
+                  <span class="truncate">{subgroup.label}</span>
+                </summary>
+                <ul class="ml-2 border-l border-line pl-2">
+                  {subgroup.items.map((item) => (
+                    <li>
+                      <a
+                        href={item.href}
+                        aria-current={item.id === currentId ? 'page' : undefined}
+                        class:list={[
+                          'flex min-h-10 items-center gap-2 rounded-lg px-2 py-1.5 text-fg/90 hover:bg-surface-2 hover:text-fg',
+                          item.id === currentId && 'bg-surface-2 font-semibold text-fg',
+                        ]}
+                      >
+                        {item.level && (
+                          <span
+                            class:list={[
+                              'h-1.5 w-1.5 shrink-0 rounded-full',
+                              levelTone[item.level] ?? 'bg-muted',
+                            ]}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span class="truncate">{item.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ))
+  }
+</nav>
+
+<style>
+  .sidebar-group > summary {
+    list-style: none;
+  }
+
+  .sidebar-group > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sidebar-group[open] > summary > span:first-child {
+    color: var(--c-fg);
+  }
+</style>

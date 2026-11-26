@@ -1,0 +1,74 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import BottomNav from '../components/BottomNav.astro';
+import CardsToolbar from '../components/CardsToolbar.astro';
+import SidebarNav from '../components/SidebarNav.astro';
+import Toc, { type Heading } from '../components/Toc.astro';
+import { getNav, sectionLabel, type NavEntry } from '../lib/nav';
+
+interface Props {
+  title: string;
+  description?: string;
+  section: string;
+  level?: string;
+  currentId: string;
+  headings?: Heading[];
+  prev?: NavEntry;
+  next?: NavEntry;
+  hasCards?: boolean;
+}
+
+const {
+  title,
+  description,
+  section,
+  level,
+  currentId,
+  headings = [],
+  prev,
+  next,
+  hasCards = false,
+} = Astro.props;
+
+const nav = await getNav();
+---
+
+<BaseLayout title={title} description={description} currentId={currentId}>
+  <div
+    class="mx-auto max-w-6xl px-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[15rem_minmax(0,1fr)_13rem]"
+  >
+    <aside class="hidden lg:block">
+      <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+        <SidebarNav nav={nav} currentId={currentId} />
+      </div>
+    </aside>
+
+    <main id="contenido" data-section={section} class="min-w-0 py-6 lg:py-10">
+      <header class="mb-6">
+        <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
+          <span class="rounded-full border border-line bg-surface px-2.5 py-1 font-semibold text-accent">
+            {sectionLabel(section)}
+          </span>
+          {
+            level && (
+              <span class="rounded-full border border-line px-2.5 py-1 text-muted">{level}</span>
+            )
+          }
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight lg:text-3xl">{title}</h1>
+      </header>
+
+      <Toc headings={headings} variant="mobile" />
+
+      {hasCards && <CardsToolbar />}
+
+      <article class="prose">
+        <slot />
+      </article>
+
+      <BottomNav prev={prev} next={next} />
+    </main>
+
+    <Toc headings={headings} variant="desktop" />
+  </div>
+</BaseLayout>

@@ -1,0 +1,28 @@
+{
+  "name": "learning-sys-admin-guides-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sitio de estudio mobile-first para administración de servidores Linux y redes",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "content": "node scripts/prepare-content.mjs"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.16",
+    "astro": "^5.14.1",
+    "mermaid": "^12.3.0",
+    "tailwindcss": "^4.1.16"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "hast-util-to-html": "^9.0.7",
+    "mdast-util-to-hast": "^13.2.2",
+    "typescript": "^5.9.3",
+    "unist-util-visit": "^5.2.0"
+  }
+}

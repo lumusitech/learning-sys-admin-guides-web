@@ -1,0 +1,43 @@
+---
+import type { NavEntry } from '../lib/nav';
+
+interface Props {
+  prev?: NavEntry;
+  next?: NavEntry;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+  (prev || next) && (
+    <nav
+      aria-label="Página anterior y siguiente"
+      class="mt-12 flex items-stretch gap-2 border-t border-line pt-4"
+    >
+      {prev ? (
+        <a
+          href={prev.href}
+          class="flex min-h-14 flex-1 flex-col justify-center rounded-xl border border-line bg-surface px-4 py-2 hover:border-accent"
+        >
+          <span class="text-[11px] uppercase tracking-wide text-muted">Anterior</span>
+          <span class="truncate text-sm font-semibold text-fg">{prev.title}</span>
+        </a>
+      ) : (
+        <span class="flex-1" />
+      )}
+
+      {next ? (
+        <a
+          href={next.href}
+          class="flex min-h-14 flex-1 flex-col items-end justify-center rounded-xl border border-line bg-surface px-4 py-2 text-right hover:border-accent"
+        >
+          <span class="text-[11px] uppercase tracking-wide text-muted">Siguiente</span>
+          <span class="truncate text-sm font-semibold text-fg">{next.title}</span>
+        </a>
+      ) : (
+        <span class="flex-1" />
+      )}
+    </nav>
+  )
+}
