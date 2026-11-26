@@ -231,6 +231,37 @@ ping app-server
 # 0.3ms — servidor vivo, red OK
 ```
 
+:::sim{state=success label="Red OK (0% de pérdida)"}
+```console
+$ ping -c 4 app-server
+PING app-server (10.0.0.5) 56(84) bytes of data.
+64 bytes from app-server (10.0.0.5): icmp_seq=1 ttl=64 time=0.31 ms
+64 bytes from app-server (10.0.0.5): icmp_seq=2 ttl=64 time=0.28 ms
+64 bytes from app-server (10.0.0.5): icmp_seq=3 ttl=64 time=0.30 ms
+64 bytes from app-server (10.0.0.5): icmp_seq=4 ttl=64 time=0.29 ms
+
+--- app-server ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+rtt min/avg/max/mdev = 0.280/0.295/0.310/0.011 ms
+```
+0% de pérdida y latencia sub-milisegundo: la red y el host están sanos. Es la primera prueba del embudo porque es rápida y descarta toda una clase de causas.
+:::
+
+:::sim{state=error label="Host inalcanzable (100% de pérdida)"}
+```console
+$ ping -c 4 app-server
+PING app-server (10.0.0.5) 56(84) bytes of data.
+From 10.0.0.1 icmp_seq=1 Destination Host Unreachable
+From 10.0.0.1 icmp_seq=2 Destination Host Unreachable
+From 10.0.0.1 icmp_seq=3 Destination Host Unreachable
+From 10.0.0.1 icmp_seq=4 Destination Host Unreachable
+
+--- app-server ping statistics ---
+4 packets transmitted, 0 received, 100% packet loss, time 3062ms
+```
+`Destination Host Unreachable` lo genera un router del camino: el host no responde ARP o la ruta no existe. **No** sigas con `curl` ni `nc`: primero resolvé capas 2/3 (host caído, interfaz, ruta o firewall).
+:::
+
 **Hipótesis descartada**: no es problema de red (ping rápido).
 
 ### Paso 2: Reducir el problema (embudo OSI)
@@ -244,6 +275,22 @@ nc -zv app-server 443
 curl -w "%{time_total}\n" -o /dev/null -s https://app.empresa.com
 # 8.234 segundos — lento, pero responde
 ```
+
+:::sim{state=success label="Puerto abierto"}
+```console
+$ nc -zv app-server 443
+Connection to app-server 443 port [tcp/https] succeeded!
+```
+`nc -z` no envía datos: solo comprueba que el handshake TCP complete. Con éxito hay algo escuchando en 443, pero eso **no** garantiza que la app responda bien: eso lo prueba el `curl` del paso anterior.
+:::
+
+:::sim{state=error label="Puerto cerrado (refused)"}
+```console
+$ nc -zv app-server 443
+nc: connect to app-server port 443 (tcp) failed: Connection refused
+```
+`Connection refused` significa que el host está vivo pero nadie escucha en ese puerto (o el firewall responde con RST). Distinto de un *timeout*, que sugiere un DROP silencioso del firewall.
+:::
 
 **Hipótesis descartada**: no es problema de puerto ni servicio caído. La app responde, pero lento.
 
@@ -262,6 +309,26 @@ free -h
 # Swap:         2.0Gi   1.8Gi   200Mi
 # ⚠️ Swap al 90% — presión de memoria
 ```
+
+:::sim{state=success label="Memoria sana"}
+```console
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            16Gi       6.1Gi       8.2Gi       512Mi       1.7Gi        9.4Gi
+Swap:          2.0Gi          0B       2.0Gi
+```
+Swap en 0 y `available` (9.4Gi) holgado: el sistema tiene margen. Mirá siempre `available` antes que `free`: `buff/cache` es memoria reutilizable.
+:::
+
+:::sim{state=error label="Swap al 90% (presión de memoria)"}
+```console
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            16Gi        12Gi       1.2Gi       512Mi       2.8Gi       3.5Gi
+Swap:          2.0Gi       1.8Gi       200Mi
+```
+Swap casi lleno y `available` por debajo del 25%: el sistema está paginando a disco. Esa es la causa más probable de la lentitud; el siguiente paso es ver **qué** proceso consume la memoria (`ps aux --sort=-%mem`).
+:::
 
 **Hallazgo**: swap creciendo. Esto puede causar lentitud (I/O en disco en vez de RAM).
 
