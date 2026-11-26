@@ -1,9 +1,9 @@
 ---
-title: "Cómo pensar como un sysadmin — Patrones de diagnóstico"
+title: "🧠 Cómo pensar como un sysadmin — Patrones de diagnóstico"
 section: "concepts"
 ---
 
-# Cómo pensar como un sysadmin — Patrones de diagnóstico
+# 🧠 Cómo pensar como un sysadmin — Patrones de diagnóstico
 
 ## 🧠 ¿Qué es?
 
@@ -26,7 +26,7 @@ Un diagnóstico incorrecto genera más downtime que el problema original.
 
 ## 🧩 Conceptos clave
 
-### Normal vs anómalo
+### ⚖️ Normal vs anómalo
 
 Un sysadmin no mira valores absolutos, sino patrones:
 
@@ -36,7 +36,7 @@ Un sysadmin no mira valores absolutos, sino patrones:
 
 ---
 
-### Señales del sistema
+### 📡 Señales del sistema
 
 El sistema siempre deja pistas:
 
@@ -50,7 +50,7 @@ Interpretar estas señales correctamente es la base del diagnóstico.
 
 ---
 
-### Reducción del problema
+### 🔎 Reducción del problema
 
 Diagnosticar es descartar hipótesis:
 
@@ -100,7 +100,7 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 
 ## 📊 Patrones normales vs anómalos (referencia conceptual)
 
-### CPU
+### 🖥️ CPU
 
 | Señal | Normal | Anómalo |
 |-------|--------|---------|
@@ -110,7 +110,7 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 | Load average | < núcleos × 1.0 | > núcleos × 2.0 → sobrecarga real o I/O |
 | Context switches | < 10.000/s | > 50.000/s → contención de locks o threads excesivos |
 
-### Memoria
+### 🧠 Memoria
 
 | Señal | Normal | Anómalo |
 |-------|--------|---------|
@@ -119,7 +119,7 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 | OOM Killer | Nunca | Procesos terminados → memoria agotada |
 | Cached | Alta (esperado) | Caída repentina → presión aguda de memoria |
 
-### Disco
+### 💽 Disco
 
 | Señal | Normal | Anómalo |
 |-------|--------|---------|
@@ -128,7 +128,7 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 | I/O wait (`iostat`) | < 5% | > 30% → disco es cuello de botella |
 | Disk latency | < 5ms (SSD), < 15ms (HDD) | > 50ms → disco degradado o sobresaturado |
 
-### Red
+### 🌐 Red
 
 | Señal | Normal | Anómalo |
 |-------|--------|---------|
@@ -137,7 +137,7 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 | TIME_WAIT acumuladas | < 10.000 | > 30.000 → agotamiento de puertos efímeros |
 | Backlog de conexiones | < 100 | > 1.000 → servidor no da abasto |
 
-### Procesos
+### ⚙️ Procesos
 
 | Señal | Normal | Anómalo |
 |-------|--------|---------|
@@ -213,11 +213,11 @@ Un solo error no es problema. Un patrón repetido sí.
 
 ## 📖 Caso de estudio: Aplicando el modelo mental
 
-### El síntoma
+### 🩺 El síntoma
 
 **Lunes 10:15 AM**: El equipo reporta que "la app va lenta". No hay alertas automáticas.
 
-### Paso 1: Observar (no asumir)
+### 👀 Paso 1: Observar (no asumir)
 
 Primer impulso: "es la base de datos, seguro". **NO**. Primero observás.
 
@@ -264,7 +264,7 @@ From 10.0.0.1 icmp_seq=4 Destination Host Unreachable
 
 **Hipótesis descartada**: no es problema de red (ping rápido).
 
-### Paso 2: Reducir el problema (embudo OSI)
+### 🔎 Paso 2: Reducir el problema (embudo OSI)
 
 ```bash
 # ¿El puerto está abierto?
@@ -294,7 +294,7 @@ nc: connect to app-server port 443 (tcp) failed: Connection refused
 
 **Hipótesis descartada**: no es problema de puerto ni servicio caído. La app responde, pero lento.
 
-### Paso 3: Verificar recursos del sistema
+### 📊 Paso 3: Verificar recursos del sistema
 
 ```bash
 # ¿CPU?
@@ -332,7 +332,7 @@ Swap casi lleno y `available` por debajo del 25%: el sistema está paginando a d
 
 **Hallazgo**: swap creciendo. Esto puede causar lentitud (I/O en disco en vez de RAM).
 
-### Paso 4: Identificar la causa
+### 🎯 Paso 4: Identificar la causa
 
 ```bash
 # ¿Qué procesos consumen más memoria?
@@ -349,7 +349,7 @@ ps aux | grep "java -jar app.jar" | awk '{sum+=$6} END {print sum/1024/1024 " GB
 
 **Hallazgo**: la app Java consume 11GB. Con 16GB totales, queda poco para el sistema y PostgreSQL.
 
-### Paso 5: Correlacionar con cambios recientes
+### 🕓 Paso 5: Correlacionar con cambios recientes
 
 ```bash
 # ¿Cambió algo recientemente?
@@ -365,7 +365,7 @@ ls -lth /opt/app/ | head -5
 
 **Correlación**: deploy a las 10:00, lentitud reportada a las 10:15. La nueva versión consume más memoria.
 
-### Paso 6: Decidir y mitigar
+### 🛠️ Paso 6: Decidir y mitigar
 
 **Opciones**:
 
@@ -389,7 +389,7 @@ curl -w "%{time_total}\n" -o /dev/null -s https://app.empresa.com
 # 0.342 segundos  ← volvió a normal
 ```
 
-### Paso 7: Verificar y documentar
+### ✅ Paso 7: Verificar y documentar
 
 ```bash
 # ¿El síntoma desapareció?
@@ -401,7 +401,7 @@ curl -w "%{time_total}\n" -o /dev/null -s https://app.empresa.com
 echo "$(date): Deploy 2025-04-14 causó memory leak. Rollback a versión 2025-04-07. Root cause: nueva versión consume 11GB vs 6GB anterior." >> /var/log/incidents.log
 ```
 
-### Lecciones del caso
+### 🎓 Lecciones del caso
 
 1. **No asumas**: el primer impulso fue "es la base de datos". Si hubieras reiniciado PostgreSQL sin diagnosticar, habrías perdido tiempo y no resuelto el problema.
 

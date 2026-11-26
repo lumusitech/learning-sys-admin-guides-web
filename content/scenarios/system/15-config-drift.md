@@ -75,14 +75,14 @@ El diagnóstico se basa en 3 preguntas: ¿qué cambió? ¿cuándo? ¿quién?
 
 ## 🛠️ Procedimiento (runbook)
 
-### 1. Identificar archivos modificados recientemente
+### 🕓 1. Identificar archivos modificados recientemente
 
 ```bash
 find /etc -type f -mtime -1 -ls 2>/dev/null
 find /etc -type f -mtime -7 -ls 2>/dev/null | awk '{print $6, $7, $8, $NF}' | sort
 ```
 
-### 2. Si el directorio está versionado con git
+### 🌿 2. Si el directorio está versionado con git
 
 ```bash
 cd /etc && git status
@@ -90,21 +90,21 @@ cd /etc && git diff
 cd /etc && git log --oneline -5
 ```
 
-### 3. Comparar con backup conocido
+### 💾 3. Comparar con backup conocido
 
 ```bash
 diff /etc/nginx/nginx.conf /backup/nginx.conf
 diff /etc/ssh/sshd_config /backup/sshd_config
 ```
 
-### 4. Identificar quién hizo el cambio
+### 🕵️ 4. Identificar quién hizo el cambio
 
 ```bash
 grep -E "nginx|sshd|apt" /var/log/auth.log | grep -v "CRON"
 last -20
 ```
 
-### 5. Verificar integridad con checksums
+### 🔐 5. Verificar integridad con checksums
 
 ```bash
 md5sum /etc/nginx/nginx.conf /etc/ssh/sshd_config /etc/apt/sources.list
@@ -119,7 +119,7 @@ sha256sum: /etc/shadow: Permission denied
 Corriste el comando sin privilegios. `/etc/shadow` es legible solo por root, así que ni siquiera obtuviste un hash. Elevá con `sudo` o pedí el hash a un usuario autorizado; no fuerces permisos sobre el archivo.
 :::
 
-### 6. Restaurar archivos modificados
+### ♻️ 6. Restaurar archivos modificados
 
 ```bash
 cp /backup/nginx.conf /etc/nginx/nginx.conf
