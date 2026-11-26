@@ -492,12 +492,16 @@ html[data-theme='dark'] .astro-code span {
   background-color: var(--c-surface);
   padding: 1rem;
   overflow-x: auto;
+  /* Las etiquetas del diagrama usan la misma fuente que el resto del sitio;
+     sin esto heredan el monospace de .prose pre y mermaid las recorta. */
+  font-family: var(--font-sans);
 }
 
 .mermaid-figure pre.mermaid {
   margin: 0;
   background: transparent;
   text-align: center;
+  font-family: inherit;
 }
 
 .mermaid-figure figcaption {
