@@ -119,12 +119,16 @@ async function renderMermaid(): Promise<void> {
 
   const { default: mermaid } = await import('mermaid');
   const theme = currentTheme() === 'dark' ? 'dark' : 'default';
+  // Mermaid mide el ancho de las etiquetas con la fuente configurada y luego
+  // las dibuja con ella. Si no coinciden (p. ej. `inherit` dentro de un <pre>
+  // monospace), los textos quedan recortados dentro de las cajas.
+  const fontFamily = getComputedStyle(document.body).fontFamily;
 
   mermaid.initialize({
     startOnLoad: false,
     theme,
     securityLevel: 'strict',
-    fontFamily: 'inherit',
+    fontFamily,
   });
 
   for (const [index, node] of nodes.entries()) {
