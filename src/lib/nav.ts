@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { base } from './base';
 
 export interface NavEntry {
   id: string;
@@ -35,11 +36,8 @@ export function sectionLabel(section: string): string {
 
 const SECTION_ORDER = ['guides', 'scenarios', 'concepts', 'reference', 'labs'];
 
-const BASE = import.meta.env.BASE_URL;
-
 /** Construye la ruta pública de una entrada del content collection. */
 export function route(id: string): string {
-  const base = BASE.endsWith('/') ? BASE : `${BASE}/`;
   return `${base}${id}/`.replace(/\/{2,}/g, '/');
 }
 
