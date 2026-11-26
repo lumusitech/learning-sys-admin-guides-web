@@ -31,7 +31,7 @@ flowchart TD
 
 ## 🎯 Problema
 
-Un servicio que funcionaba correctamente ayer dejó de responder esta mañana. No hubo deploy ni cambio planificado. Al inspeccionar, encontrás que `/etc/nginx/nginx.conf` fue modificado anoche y que varios archivos en `/etc/` tienen timestamps recientes sin explicación. Necesitás detectar qué cambió, cuándo, y si fue un cambio autorizado o un incidente de seguridad.
+Un servicio que funcionaba correctamente ayer dejó de responder esta mañana. No hubo deploy ni cambio planificado. Al inspeccionar, encuentras que `/etc/nginx/nginx.conf` fue modificado anoche y que varios archivos en `/etc/` tienen timestamps recientes sin explicación. Necesitas detectar qué cambió, cuándo, y si fue un cambio autorizado o un incidente de seguridad.
 
 ---
 
@@ -154,7 +154,7 @@ Rollback:
 
 El config drift es la causa más común de "funcionaba ayer y hoy no". Sin versionamiento de configuraciones, diagnosticar qué cambió requiere comparación manual de cada archivo sospechoso.
 
-La solución definitiva es versionar `/etc/` con git: cada cambio queda registrado con timestamp, autor y diff. Con `git diff` resolvés en 5 segundos lo que sin git te lleva 30 minutos de `stat` y `diff` manual.
+La solución definitiva es versionar `/etc/` con git: cada cambio queda registrado con timestamp, autor y diff. Con `git diff` resuelves en 5 segundos lo que sin git te lleva 30 minutos de `stat` y `diff` manual.
 
 ---
 

@@ -2,7 +2,7 @@
 
 Regla de oro: **un icono = un significado**. El lector debe poder asociar el icono
 con lo que va a encontrar incluso sin leer el título. Si un icono nuevo no existe
-en este set, se agrega acá **antes** de usarlo, con su significado único.
+en este set, se agrega aquí **antes** de usarlo, con su significado único.
 
 ## Cómo se aplica
 

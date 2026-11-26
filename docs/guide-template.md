@@ -1,13 +1,13 @@
 # Plantilla de guide
 
-Copiá este esqueleto para un guide nuevo. Los iconos **no son libres**: salen de
+Copia este esqueleto para un guide nuevo. Los iconos **no son libres**: salen de
 [`docs/icon-system.md`](./icon-system.md) y se validan con `pnpm lint:icons`.
 El lint también exige icono en el `title` del frontmatter.
 
 Reglas rápidas:
 
 - Un icono = un significado (ver el set canónico).
-- Voseo consistente ("guardá", "usá", "ejecutá").
+- Español neutro con "tú" imperativo ("guarda", "usa", "ejecuta"); sin voseo ni regionalismos.
 - Un idea por sección; el resto va en subsecciones `h3`.
 - Todo comando con salida breve puede llevar una simulación (`:::sim`).
 
@@ -137,4 +137,4 @@ Explicación y corrección.
 - [ ] Simulaciones de éxito **y** de error en los comandos clave.
 - [ ] Tablas con `<!-- cards -->` sólo si son comparaciones: el resto van como tabla normal.
 - [ ] Probado en móvil (320-412 px): sin scroll horizontal de página, tablas con scroll propio.
-- [ ] Voseo consistente y sin mezclar idiomas.
+- [ ] Español neutro (tú imperativo): sin voseo ni regionalismos.

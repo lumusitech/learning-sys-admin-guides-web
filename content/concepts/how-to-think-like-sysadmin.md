@@ -152,7 +152,7 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 
 ## 🔍 Embudo de diagnóstico (capas OSI)
 
-Cuando enfrentás un síntoma, reducí el problema identificando qué capa del stack está fallando:
+Cuando enfrentas un síntoma, reduce el problema identificando qué capa del stack está fallando:
 
 | Síntoma | Capa probable | Comando inicial |
 |---------|--------------|-----------------|
@@ -167,12 +167,12 @@ Cuando enfrentás un síntoma, reducí el problema identificando qué capa del s
 
 El embudo funciona de afuera hacia adentro:
 
-1. verificá conectividad básica (¿responde el host?)
-2. verificá el servicio (¿el puerto está abierto?)
-3. verificá la aplicación (¿responde correctamente?)
-4. verificá los recursos (¿CPU, memoria, disco, red?)
+1. verifica conectividad básica (¿responde el host?)
+2. verifica el servicio (¿el puerto está abierto?)
+3. verifica la aplicación (¿responde correctamente?)
+4. verifica los recursos (¿CPU, memoria, disco, red?)
 
-Cada capa que descartás reduce el espacio de búsqueda a la mitad.
+Cada capa que descartas reduce el espacio de búsqueda a la mitad.
 
 ---
 
@@ -193,8 +193,8 @@ Reglas del proceso:
 
 - una hipótesis por vez — cambiar una sola variable entre pruebas
 - la prueba más rápida primero — `ping` antes que `tcpdump`, `free` antes que `perf`
-- si no entendés la salida, no la inventes — buscá ayuda o documentación
-- documentá lo que hiciste — el próximo incidente puede ser idéntico
+- si no entiendes la salida, no la inventes — busca ayuda o documentación
+- documenta lo que hiciste — el próximo incidente puede ser idéntico
 
 ---
 
@@ -219,7 +219,7 @@ Un solo error no es problema. Un patrón repetido sí.
 
 ### 👀 Paso 1: Observar (no asumir)
 
-Primer impulso: "es la base de datos, seguro". **NO**. Primero observás.
+Primer impulso: "es la base de datos, seguro". **NO**. Primero observas.
 
 ```bash
 # ¿Qué capa? Empezar por conectividad
@@ -317,7 +317,7 @@ $ free -h
 Mem:            16Gi       6.1Gi       8.2Gi       512Mi       1.7Gi        9.4Gi
 Swap:          2.0Gi          0B       2.0Gi
 ```
-Swap en 0 y `available` (9.4Gi) holgado: el sistema tiene margen. Mirá siempre `available` antes que `free`: `buff/cache` es memoria reutilizable.
+Swap en 0 y `available` (9.4Gi) holgado: el sistema tiene margen. Mira siempre `available` antes que `free`: `buff/cache` es memoria reutilizable.
 :::
 
 :::sim{state=error label="Swap al 90% (presión de memoria)"}
