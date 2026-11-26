@@ -1,0 +1,532 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ============================================================
+   Tokens semánticos
+   Dark-first: los valores por defecto son oscuros.
+   El modo claro se activa con [data-theme="light"] en <html>.
+   ============================================================ */
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-line: var(--c-line);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-accent: var(--c-accent);
+}
+
+:root {
+  color-scheme: dark;
+
+  --c-bg: #0b0d10;
+  --c-surface: #12151a;
+  --c-surface-2: #1a1f26;
+  --c-line: #232a33;
+  --c-fg: #e6e9ee;
+  --c-muted: #9aa4b2;
+  --c-accent: #4cc2ff;
+
+  --c-guides: #4cc2ff;
+  --c-scenarios: #ffb454;
+  --c-concepts: #a78bfa;
+  --c-reference: #4ade80;
+  --c-labs: #f472b6;
+
+  --content-width: 46rem;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --c-bg: #fbfbfc;
+  --c-surface: #f2f3f5;
+  --c-surface-2: #e9ebee;
+  --c-line: #d8dce2;
+  --c-fg: #14181d;
+  --c-muted: #5b6672;
+  --c-accent: #0b7bc4;
+
+  --c-guides: #0b7bc4;
+  --c-scenarios: #b45309;
+  --c-concepts: #6d28d9;
+  --c-reference: #15803d;
+  --c-labs: #be185d;
+}
+
+/* Acento por sección */
+[data-section="guides"] { --c-accent: var(--c-guides); }
+[data-section="scenarios"] { --c-accent: var(--c-scenarios); }
+[data-section="concepts"] { --c-accent: var(--c-concepts); }
+[data-section="reference"] { --c-accent: var(--c-reference); }
+[data-section="labs"] { --c-accent: var(--c-labs); }
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  html {
+    background-color: var(--c-bg);
+    color: var(--c-fg);
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 4.5rem;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--c-accent) 35%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  a {
+    color: var(--c-accent);
+    text-underline-offset: 3px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-surface-2) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--c-surface-2);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================
+   Prose (contenido markdown)
+   ============================================================ */
+
+.prose {
+  --tw-prose-body: var(--c-fg);
+  --tw-prose-headings: var(--c-fg);
+  --tw-prose-lead: var(--c-muted);
+  --tw-prose-links: var(--c-accent);
+  --tw-prose-bold: var(--c-fg);
+  --tw-prose-counters: var(--c-muted);
+  --tw-prose-bullets: var(--c-line);
+  --tw-prose-hr: var(--c-line);
+  --tw-prose-quotes: var(--c-fg);
+  --tw-prose-quote-borders: var(--c-accent);
+  --tw-prose-captions: var(--c-muted);
+  --tw-prose-code: var(--c-fg);
+  --tw-prose-pre-code: var(--c-fg);
+  --tw-prose-pre-bg: var(--c-surface);
+  --tw-prose-th-borders: var(--c-line);
+  --tw-prose-td-borders: var(--c-line);
+
+  max-width: var(--content-width);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.prose :where(h1, h2, h3, h4) {
+  letter-spacing: -0.015em;
+  scroll-margin-top: 5rem;
+}
+
+.prose :where(h1) {
+  font-size: 1.9rem;
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+}
+
+.prose :where(h2) {
+  font-size: 1.4rem;
+  line-height: 1.35;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--c-line);
+}
+
+.prose :where(h3) {
+  font-size: 1.15rem;
+  margin-top: 2rem;
+}
+
+.prose :where(h2, h3, h4) > a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.prose :where(h2, h3, h4) > a:hover {
+  color: var(--c-accent);
+}
+
+.prose :where(p, li) {
+  overflow-wrap: break-word;
+}
+
+.prose :where(a) {
+  font-weight: 500;
+}
+
+.prose :where(code):not(pre code) {
+  background-color: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.prose :where(code):not(pre code)::before,
+.prose :where(code):not(pre code)::after {
+  content: "";
+}
+
+.prose :where(blockquote) {
+  border-left: 3px solid var(--c-accent);
+  background-color: var(--c-surface);
+  border-radius: 0 8px 8px 0;
+  padding: 0.25rem 1rem;
+  font-style: normal;
+}
+
+.prose :where(blockquote p:first-of-type)::before,
+.prose :where(blockquote p:last-of-type)::after {
+  content: "";
+}
+
+/* ============================================================
+   Código
+   ============================================================ */
+
+.code-wrap {
+  position: relative;
+  margin-block: 1.5rem;
+}
+
+.code-wrap pre {
+  margin: 0;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  padding: 1rem 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  -webkit-overflow-scrolling: touch;
+}
+
+.code-wrap .astro-code {
+  background-color: var(--c-surface) !important;
+}
+
+/* Dual theme de Shiki: el fondo lo controla --c-surface (regla de arriba),
+   y los tokens cambian de color según el tema activo. */
+.astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
+html[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
+}
+
+.code-wrap .copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--c-line);
+  border-radius: 7px;
+  background-color: var(--c-surface-2);
+  color: var(--c-muted);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.code-wrap:hover .copy-btn,
+.code-wrap:focus-within .copy-btn,
+.code-wrap .copy-btn[data-copied="true"] {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .code-wrap .copy-btn {
+    opacity: 1;
+  }
+}
+
+.code-wrap .copy-btn:hover {
+  color: var(--c-fg);
+  border-color: var(--c-accent);
+}
+
+.code-wrap .copy-btn[data-copied="true"] {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+/* ============================================================
+   Tablas
+   ============================================================ */
+
+.table-wrap {
+  margin-block: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.prose table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.prose thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--c-surface-2);
+  text-align: left;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-muted);
+  white-space: nowrap;
+}
+
+.prose tbody tr:nth-child(even) {
+  background-color: color-mix(in oklab, var(--c-surface) 55%, transparent);
+}
+
+.prose th,
+.prose td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--c-line);
+  vertical-align: top;
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Primera columna sticky: en móvil mantiene el identificador visible */
+@media (max-width: 767px) {
+  .prose thead th:first-child,
+  .prose tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: var(--c-bg);
+    border-right: 1px solid var(--c-line);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .prose thead th:first-child {
+    background-color: var(--c-surface-2);
+    z-index: 3;
+  }
+}
+
+/* ============================================================
+   Cards colapsables (generadas por remark-cards)
+   ============================================================ */
+
+.cards {
+  display: grid;
+  gap: 0.5rem;
+  margin-block: 1.5rem;
+}
+
+.cards > details {
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background-color: var(--c-surface);
+  overflow: hidden;
+}
+
+.cards > details > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cards > details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.cards > details > summary::before {
+  content: "▸";
+  color: var(--c-accent);
+  font-size: 0.75rem;
+  transition: transform 120ms ease;
+  flex: 0 0 auto;
+}
+
+.cards > details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.cards > details > summary:hover {
+  background-color: var(--c-surface-2);
+}
+
+.cards > details > summary:focus-visible {
+  outline-offset: -2px;
+}
+
+.cards .card-sub {
+  color: var(--c-muted);
+  font-weight: 400;
+  font-size: 0.875rem;
+}
+
+.cards .card-body {
+  border-top: 1px solid var(--c-line);
+  padding: 0.75rem 0.9rem 0.9rem;
+}
+
+.cards .card-body dl {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.cards .card-body dt {
+  color: var(--c-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cards .card-body dd {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.cards .card-body dd + dt {
+  margin-top: 0.35rem;
+}
+
+.cards .card-body p {
+  margin: 0.35rem 0;
+}
+
+/* ============================================================
+   Mermaid
+   ============================================================ */
+
+.mermaid-figure {
+  margin-block: 1.5rem;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background-color: var(--c-surface);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.mermaid-figure pre.mermaid {
+  margin: 0;
+  background: transparent;
+  text-align: center;
+}
+
+.mermaid-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--c-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+/* ============================================================
+   Utilidades
+   ============================================================ */
+
+.reading-progress {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: var(--c-accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 60;
+  pointer-events: none;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--c-accent);
+  color: var(--c-bg);
+  font-weight: 700;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}

@@ -1,0 +1,52 @@
+---
+interface Props {
+  placeholder?: string;
+}
+
+const { placeholder = 'Filtrar esta página…' } = Astro.props;
+---
+
+<div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center" data-cards-toolbar>
+  <label class="relative flex-1">
+    <span class="sr-only">Filtrar el contenido de esta página</span>
+    <input
+      type="search"
+      data-local-filter
+      placeholder={placeholder}
+      autocomplete="off"
+      spellcheck="false"
+      class="h-11 w-full rounded-lg border border-line bg-surface px-3 text-sm text-fg outline-none placeholder:text-muted focus:border-accent"
+    />
+  </label>
+
+  <div class="flex items-center gap-2">
+    <button
+      type="button"
+      data-expand-all
+      class="h-11 rounded-lg border border-line px-3 text-xs font-semibold text-muted hover:border-accent hover:text-fg"
+    >
+      Expandir todo
+    </button>
+    <button
+      type="button"
+      data-collapse-all
+      class="h-11 rounded-lg border border-line px-3 text-xs font-semibold text-muted hover:border-accent hover:text-fg"
+    >
+      Colapsar todo
+    </button>
+    <span
+      class="min-w-10 text-center text-xs text-muted"
+      data-filter-count
+      aria-live="polite"
+      aria-label="Elementos visibles"
+    ></span>
+  </div>
+</div>
+
+<p
+  data-filter-empty
+  hidden
+  class="mb-4 rounded-lg border border-line bg-surface px-4 py-3 text-sm text-muted"
+>
+  Ningún elemento coincide con el filtro.
+</p>

@@ -1,0 +1,38 @@
+---
+import { getCollection, render } from 'astro:content';
+import DocLayout from '../layouts/DocLayout.astro';
+import { getAllEntries } from '../lib/nav';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('docs');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const all = await getAllEntries();
+const index = all.findIndex((item) => item.id === entry.id);
+const prev = index > 0 ? all[index - 1] : undefined;
+const next = index >= 0 && index < all.length - 1 ? all[index + 1] : undefined;
+
+const section = entry.id.split('/')[0] ?? '';
+const hasCards = (entry.body ?? '').includes('<!-- cards -->');
+---
+
+<DocLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  section={section}
+  level={entry.data.level}
+  currentId={entry.id}
+  headings={headings}
+  prev={prev}
+  next={next}
+  hasCards={hasCards}
+>
+  <Content />
+</DocLayout>

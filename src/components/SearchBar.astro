@@ -1,0 +1,131 @@
+---
+import type { NavEntry } from '../lib/nav';
+
+interface Props {
+  items: NavEntry[];
+}
+
+const { items } = Astro.props;
+const sections = Array.from(new Set(items.map((item) => item.section)));
+const index = items.map((item) => ({
+  title: item.title,
+  href: item.href,
+  section: item.section,
+}));
+---
+
+<button
+  type="button"
+  data-search-open
+  class="inline-flex h-11 items-center gap-2 rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:text-fg"
+  aria-label="Abrir búsqueda"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m20 20-3.5-3.5"></path>
+  </svg>
+  <span class="hidden md:inline">Buscar</span>
+  <kbd class="hidden rounded border border-line px-1.5 py-0.5 text-[11px] md:inline">⌘K</kbd>
+</button>
+
+<dialog
+  data-search-dialog
+  class="search-dialog m-auto w-[min(42rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface p-0 text-fg backdrop:bg-black/60"
+  aria-label="Búsqueda global"
+>
+  <div class="flex items-center gap-2 border-b border-line px-4 py-3">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      class="shrink-0 text-muted"
+    >
+      <circle cx="11" cy="11" r="7"></circle>
+      <path d="m20 20-3.5-3.5"></path>
+    </svg>
+    <input
+      type="search"
+      data-search-input
+      placeholder="Buscar en todo el sitio…"
+      aria-label="Buscar en todo el sitio"
+      class="h-10 w-full bg-transparent text-base outline-none placeholder:text-muted"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button
+      type="button"
+      class="rounded-md border border-line px-2 py-1 text-xs text-muted"
+      onclick="this.closest('dialog')?.close()"
+    >
+      Esc
+    </button>
+  </div>
+
+  <div class="flex flex-wrap gap-1.5 border-b border-line px-4 py-2.5">
+    {
+      sections.map((section) => (
+        <span class="rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-muted">
+          {section}
+        </span>
+      ))
+    }
+  </div>
+
+  <div data-search-results class="max-h-[60vh] overflow-y-auto p-2"></div>
+
+  <p class="border-t border-line px-4 py-2 text-[11px] text-muted">
+    Búsqueda por título. El motor difuso llega en una próxima fase.
+  </p>
+</dialog>
+
+<script type="application/json" data-search-index set:html={JSON.stringify(index)} />
+
+<style>
+  .search-dialog::backdrop {
+    backdrop-filter: blur(2px);
+  }
+
+  :global(.search-result) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--c-fg);
+    text-decoration: none;
+    font-size: 0.9375rem;
+  }
+
+  :global(.search-result:hover),
+  :global(.search-result:focus-visible) {
+    background-color: var(--c-surface-2);
+  }
+
+  :global(.search-result-section) {
+    flex: 0 0 auto;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--c-muted);
+  }
+</style>
