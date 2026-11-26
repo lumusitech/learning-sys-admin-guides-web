@@ -708,6 +708,14 @@ html[data-theme='dark'] .astro-code span {
 .search-hit {
   font-weight: 700;
   color: var(--c-accent);
+  background-color: color-mix(in oklab, var(--c-accent) 20%, transparent);
+  border-radius: 3px;
+  padding: 0 0.12em;
+}
+
+/* Sobre el título de sección (ya en color acento) el resaltado va en color de texto. */
+.search-result-heading .search-hit {
+  color: var(--c-fg);
 }
 
 .search-empty {
