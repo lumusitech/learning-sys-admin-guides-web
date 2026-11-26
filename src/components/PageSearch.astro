@@ -1,0 +1,38 @@
+---
+interface Props {
+  placeholder?: string;
+}
+
+const { placeholder = 'Buscar en esta página: comandos, secciones, tarjetas…' } = Astro.props;
+---
+
+<div class="relative mb-3" data-page-search>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    class="pointer-events-none absolute left-3 top-[1.375rem] -translate-y-1/2 text-muted"
+  >
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m20 20-3.5-3.5"></path>
+  </svg>
+  <label class="block">
+    <span class="sr-only">Buscar en esta página</span>
+    <input
+      type="search"
+      data-local-filter
+      placeholder={placeholder}
+      autocomplete="off"
+      spellcheck="false"
+      class="h-11 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-sm text-fg outline-none placeholder:text-muted focus:border-accent"
+    />
+  </label>
+  <div class="local-results" data-local-results hidden></div>
+</div>
