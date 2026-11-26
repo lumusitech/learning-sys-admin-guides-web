@@ -111,6 +111,14 @@ md5sum /etc/nginx/nginx.conf /etc/ssh/sshd_config /etc/apt/sources.list
 sha256sum /etc/passwd /etc/shadow /etc/sudoers
 ```
 
+:::sim{state=error label="Sin privilegios (exit 1)"}
+```console
+$ sha256sum /etc/shadow
+sha256sum: /etc/shadow: Permission denied
+```
+Corriste el comando sin privilegios. `/etc/shadow` es legible solo por root, así que ni siquiera obtuviste un hash. Elevá con `sudo` o pedí el hash a un usuario autorizado; no fuerces permisos sobre el archivo.
+:::
+
 ### 6. Restaurar archivos modificados
 
 ```bash

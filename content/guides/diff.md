@@ -174,6 +174,27 @@ Más verboso que `-u`, pero es POSIX y sirve en sistemas muy antiguos.
 
 > ⚠️ Las cabeceras `---`/`+++` incluyen la fecha del archivo. Dos ejecuciones del mismo `diff -u` producen parches con cabeceras distintas. `patch` las ignora, pero si comparás parches entre sí, usá `--label` (GNU/BSD) o filtrá las dos primeras líneas.
 
+### 🧪 Salidas simuladas
+
+Tocá cada botón para ver qué imprime `diff` y cómo interpretarlo.
+
+:::sim{state=success label="Sin diferencias (exit 0)"}
+```console
+$ diff -q /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+$
+```
+No imprimió nada y el **exit code 0** confirma que los archivos son idénticos. En un chequeo automatizado, ese silencio es la señal de éxito: podés encadenar `&& echo ok`.
+:::
+
+:::sim{state=error label="Con diferencias (exit 1)"}
+```console
+$ diff -q /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+Files /etc/nginx/nginx.conf and /etc/nginx/nginx.conf.bak differ
+$
+```
+**No es un fallo**: `diff` usa el exit code 1 para decir "hay diferencias". El mensaje va a stdout y nombra los dos archivos. En scripts con `set -e` esto aborta la ejecución, así que tratalo explícitamente (`diff ... || true`, o capturá `$?`).
+:::
+
 ---
 
 ## 🎛️ Opciones principales
