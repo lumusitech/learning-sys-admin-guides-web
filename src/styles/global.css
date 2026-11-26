@@ -383,7 +383,7 @@ html[data-theme='dark'] .astro-code span {
 }
 
 /* ============================================================
-   Cards colapsables (generadas por remark-cards)
+   Cards colapsables (generadas por mdast-cards)
    ============================================================ */
 
 .cards {

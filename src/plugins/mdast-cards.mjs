@@ -1,4 +1,3 @@
-import { visit } from 'unist-util-visit';
 import { toHast } from 'mdast-util-to-hast';
 import { toHtml } from 'hast-util-to-html';
 
@@ -11,6 +10,8 @@ import { toHtml } from 'hast-util-to-html';
  * clave/valor dentro del cuerpo.
  *
  * El marcador es opt-in: una tabla sin `<!-- cards -->` sigue siendo tabla.
+ *
+ * Plugin de Sätteri (mdast): corre sobre el AST de Markdown nativo de Astro 7.
  */
 
 const MARKER = /<!--\s*cards\s*-->/;
@@ -57,24 +58,20 @@ function buildCards(table) {
   return `<div class="cards">${cards.join('')}</div>`;
 }
 
-export function remarkCards() {
-  return (tree) => {
-    visit(tree, (node) => {
-      if (!Array.isArray(node.children)) return;
+export function mdastCards() {
+  return {
+    name: 'cards',
+    table(node, ctx) {
+      const parent = ctx.parent(node);
+      const index = ctx.indexOf(node);
+      if (!parent || typeof index !== 'number') return;
 
-      for (let index = 0; index < node.children.length; index += 1) {
-        const child = node.children[index];
-        if (child?.type !== 'table') continue;
+      const previous = parent.children[index - 1];
+      if (previous?.type !== 'html' || !MARKER.test(previous.value)) return;
 
-        const previous = node.children[index - 1];
-        if (previous?.type !== 'html' || !MARKER.test(previous.value)) continue;
-
-        node.children.splice(index - 1, 2, {
-          type: 'html',
-          value: buildCards(child),
-        });
-        index -= 1;
-      }
-    });
+      const html = buildCards(node);
+      ctx.removeNode(previous);
+      ctx.replaceNode(node, { type: 'html', value: html });
+    },
   };
 }
