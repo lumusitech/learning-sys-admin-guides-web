@@ -7,11 +7,6 @@ interface Props {
 
 const { items } = Astro.props;
 const sections = Array.from(new Set(items.map((item) => item.section)));
-const index = items.map((item) => ({
-  title: item.title,
-  href: item.href,
-  section: item.section,
-}));
 ---
 
 <button
@@ -92,11 +87,9 @@ const index = items.map((item) => ({
   <div data-search-results class="max-h-[60vh] overflow-y-auto p-2"></div>
 
   <p class="border-t border-line px-4 py-2 text-[11px] text-muted">
-    Búsqueda por título. El motor difuso llega en una próxima fase.
+    Búsqueda difusa en títulos y contenido. <kbd>↑</kbd> <kbd>↓</kbd> para navegar, <kbd>Enter</kbd> para abrir.
   </p>
 </dialog>
-
-<script type="application/json" data-search-index set:html={JSON.stringify(index)} />
 
 <style>
   .search-dialog::backdrop {
@@ -105,9 +98,8 @@ const index = items.map((item) => ({
 
   :global(.search-result) {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
+    flex-direction: column;
+    gap: 0.25rem;
     min-height: 2.75rem;
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
@@ -117,8 +109,20 @@ const index = items.map((item) => ({
   }
 
   :global(.search-result:hover),
-  :global(.search-result:focus-visible) {
+  :global(.search-result:focus-visible),
+  :global(.search-result[data-active='true']) {
     background-color: var(--c-surface-2);
+  }
+
+  :global(.search-result-head) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  :global(.search-result-title) {
+    font-weight: 600;
   }
 
   :global(.search-result-section) {
@@ -127,5 +131,20 @@ const index = items.map((item) => ({
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--c-muted);
+  }
+
+  :global(.search-result-excerpt) {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--c-muted);
+  }
+
+  :global(.search-result-heading) {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--c-accent);
   }
 </style>

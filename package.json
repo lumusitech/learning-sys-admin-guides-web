@@ -6,11 +6,12 @@
   "packageManager": "pnpm@12.6.0",
   "description": "Sitio de estudio mobile-first para administración de servidores Linux y redes",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "pnpm search:index && astro dev",
+    "build": "pnpm search:index && astro build",
     "preview": "astro preview",
     "check": "astro check",
     "lint:icons": "node scripts/lint-icons.mjs",
+    "search:index": "node scripts/build-search-index.mjs",
     "content": "node scripts/prepare-content.mjs"
   },
   "dependencies": {
