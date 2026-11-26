@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "frontmatter": "node scripts/add-frontmatter.mjs"
+    "content": "node scripts/prepare-content.mjs"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
