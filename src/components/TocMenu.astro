@@ -1,0 +1,65 @@
+---
+import type { Heading } from './Toc.astro';
+
+interface Props {
+  headings?: Heading[];
+}
+
+const { headings = [] } = Astro.props;
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+{
+  items.length > 1 && (
+    <div class="relative" data-toc-menu>
+      <button
+        type="button"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:text-fg"
+        data-toc-menu-toggle
+        aria-expanded="false"
+        aria-controls="toc-menu-panel"
+        aria-label="Índice de la página"
+        title="Índice de la página"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+        </svg>
+      </button>
+
+      <nav
+        id="toc-menu-panel"
+        class="toc-menu-panel"
+        data-toc-menu-panel
+        data-toc
+        aria-label="Índice de la página"
+        hidden
+      >
+        <p class="toc-menu-title">En esta página</p>
+        <ul>
+          {items.map((heading) => (
+            <li>
+              <a
+                href={`#${heading.slug}`}
+                data-toc-link
+                class:list={['toc-menu-link', heading.depth === 3 && 'toc-menu-link-sub']}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  )
+}

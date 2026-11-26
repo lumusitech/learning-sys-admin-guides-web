@@ -314,16 +314,53 @@ if (drawer && drawerToggle) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Índice de la página (topbar)                                        */
+/* ------------------------------------------------------------------ */
+
+const tocMenu = document.querySelector<HTMLElement>('[data-toc-menu]');
+const tocMenuToggle = document.querySelector<HTMLButtonElement>('[data-toc-menu-toggle]');
+const tocMenuPanel = document.querySelector<HTMLElement>('[data-toc-menu-panel]');
+
+if (tocMenu && tocMenuToggle && tocMenuPanel) {
+  const setMenuOpen = (open: boolean): void => {
+    tocMenuPanel.hidden = !open;
+    tocMenuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+
+  tocMenuToggle.addEventListener('click', () => setMenuOpen(tocMenuPanel.hidden));
+
+  tocMenuPanel.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMenuOpen(false));
+  });
+
+  document.addEventListener('click', (event) => {
+    if (tocMenuPanel.hidden) return;
+    const target = event.target;
+    if (target instanceof Node && !tocMenu.contains(target)) setMenuOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !tocMenuPanel.hidden) {
+      setMenuOpen(false);
+      tocMenuToggle.focus();
+    }
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /* TOC activo                                                          */
 /* ------------------------------------------------------------------ */
 
 const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc] a[href^="#"]'));
 
 if (tocLinks.length > 0) {
-  const byId = new Map<string, HTMLAnchorElement>();
+  const byId = new Map<string, HTMLAnchorElement[]>();
   for (const link of tocLinks) {
     const id = decodeURIComponent(link.hash.slice(1));
-    if (id) byId.set(id, link);
+    if (!id) continue;
+    const links = byId.get(id);
+    if (links) links.push(link);
+    else byId.set(id, [link]);
   }
 
   const headings = Array.from(byId.keys())
@@ -331,8 +368,10 @@ if (tocLinks.length > 0) {
     .filter((element): element is HTMLElement => element !== null);
 
   const setActive = (id: string): void => {
-    for (const [key, link] of byId) {
-      link.dataset.active = key === id ? 'true' : 'false';
+    for (const [key, links] of byId) {
+      for (const link of links) {
+        link.dataset.active = key === id ? 'true' : 'false';
+      }
     }
   };
 

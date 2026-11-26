@@ -33,7 +33,7 @@ const {
 const nav = await getNav();
 ---
 
-<BaseLayout title={title} description={description} currentId={currentId}>
+<BaseLayout title={title} description={description} currentId={currentId} headings={headings}>
   <div
     class="mx-auto max-w-6xl px-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[15rem_minmax(0,1fr)_13rem]"
   >
@@ -58,8 +58,6 @@ const nav = await getNav();
         <h1 class="text-2xl font-bold tracking-tight lg:text-3xl">{title}</h1>
       </header>
 
-      <Toc headings={headings} variant="mobile" />
-
       {hasCards && <CardsToolbar />}
 
       <article class="prose">
@@ -69,6 +67,6 @@ const nav = await getNav();
       <BottomNav prev={prev} next={next} />
     </main>
 
-    <Toc headings={headings} variant="desktop" />
+    <Toc headings={headings} />
   </div>
 </BaseLayout>
