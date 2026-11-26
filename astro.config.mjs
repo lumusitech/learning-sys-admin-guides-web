@@ -4,6 +4,7 @@ import { satteri } from '@astrojs/markdown-satteri';
 import { mdastCards } from './src/plugins/mdast-cards.mjs';
 import { mdastMermaid } from './src/plugins/mdast-mermaid.mjs';
 import { mdastRemoveH1 } from './src/plugins/mdast-remove-h1.mjs';
+import { hastTableWrap } from './src/plugins/hast-table-wrap.mjs';
 
 export default defineConfig({
   site: 'https://lumusitech.github.io',
@@ -13,6 +14,7 @@ export default defineConfig({
     // Los plugins se declaran como plugins mdast en vez de remark.
     processor: satteri({
       mdastPlugins: [mdastRemoveH1, mdastCards, mdastMermaid],
+      hastPlugins: [hastTableWrap],
     }),
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark-default' },
