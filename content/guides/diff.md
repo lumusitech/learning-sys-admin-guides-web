@@ -1,9 +1,9 @@
 ---
-title: "diff — Guía completa de comparación de archivos"
+title: "🔀 diff — Guía completa de comparación de archivos"
 level: "Intermedio"
 section: "guides"
 ---
-# diff — Guía completa de comparación de archivos
+# 🔀 diff — Guía completa de comparación de archivos
 
 **Nivel:** 🟡 Intermedio
 **Archivos de práctica:** Funciona en cualquier sistema; los ejemplos usan snapshots de `/etc` (no requiere lab)
@@ -113,7 +113,7 @@ ps aux | diff - /tmp/ps-ayer.txt
 
 ## 🔑 Salida clave
 
-### Formato normal (por defecto)
+### 📄 Formato normal (por defecto)
 
 ```text
 3c3,4
@@ -127,7 +127,7 @@ ps aux | diff - /tmp/ps-ayer.txt
 - `<` → contenido del primer archivo; `>` → contenido del segundo.
 - Otros operadores: `a` (agregado), `d` (borrado).
 
-### Formato unificado (`-u`)
+### 🧾 Formato unificado (`-u`)
 
 ```text
 --- old.conf 2026-11-26 00:25:02.188133939 +0000
@@ -144,7 +144,7 @@ ps aux | diff - /tmp/ps-ayer.txt
 - `-` → solo en A; `+` → solo en B; espacio → contexto igual en ambos.
 - Es el formato que consumen `patch` y los revisores de código.
 
-### Formato contexto (`-c`)
+### 📜 Formato contexto (`-c`)
 
 ```text
 *** old.conf 2026-11-26 00:25:02.188133939 +0000
@@ -163,7 +163,7 @@ ps aux | diff - /tmp/ps-ayer.txt
 
 Más verboso que `-u`, pero es POSIX y sirve en sistemas muy antiguos.
 
-### Mensajes de resumen
+### 📌 Mensajes de resumen
 
 | Salida | Significado |
 |--------|-------------|
@@ -223,7 +223,7 @@ $
 
 ## 📋 Patrones de uso
 
-### 1. Config drift: detectar cambios no autorizados
+### 🧭 1. Config drift: detectar cambios no autorizados
 
 Guardá una baseline y compará después:
 
@@ -246,7 +246,7 @@ Only in /etc/cron.d: backup-rogue
 diff -u /var/backups/etc-2026-11-20/nginx/nginx.conf /etc/nginx/nginx.conf
 ```
 
-### 2. Auditoría SUID: comparar contra la baseline
+### 🔐 2. Auditoría SUID: comparar contra la baseline
 
 ```bash
 find / -xdev -perm -4000 -type f 2>/dev/null | sort > /var/lib/baseline/suid.txt
@@ -257,7 +257,7 @@ diff -u /var/lib/baseline/suid.txt /tmp/suid-ahora.txt
 
 Un `>` en la salida es un binario SUID nuevo: investigalo antes de cualquier otra cosa.
 
-### 3. Verificar un backup
+### 💾 3. Verificar un backup
 
 ```bash
 diff -rq /srv/data /mnt/backup/data
@@ -271,7 +271,7 @@ diff -rN /srv/data /mnt/backup/data | grep '^Only in /srv/data'
 
 > Para backups grandes, primero `rsync --dry-run --itemize-changes` es más rápido; `diff` confirma contenido.
 
-### 4. Comparar inventarios entre dos servidores
+### 📦 4. Comparar inventarios entre dos servidores
 
 ```bash
 ssh web01 'rpm -qa | sort' > /tmp/web01.txt
@@ -281,7 +281,7 @@ diff -u /tmp/web01.txt /tmp/web02.txt
 
 Lo mismo sirve para paquetes (`dpkg -l`), usuarios (`cut -d: -f1 /etc/passwd`), cron o módulos del kernel.
 
-### 5. Generar y aplicar un parche
+### 🩹 5. Generar y aplicar un parche
 
 ```bash
 diff -u nginx.conf nginx.conf.nuevo > nginx.patch
@@ -298,7 +298,7 @@ patch -R -p0 nginx.conf.aplicado < nginx.patch
 
 > `-p0` usa la ruta tal como está en el parche. Si el parche viene de un repo con rutas `a/` y `b/`, usá `-p1`.
 
-### 6. Filtrar ruido de formato
+### 🔇 6. Filtrar ruido de formato
 
 ```bash
 diff -w old.conf new.conf      # ignora todo el espacio
@@ -309,7 +309,7 @@ diff -B old.conf new.conf      # ignora líneas en blanco
 
 Si con `-w` sigue habiendo diferencias, el cambio es real.
 
-### 7. Comparar contra un comando en vivo
+### 📡 7. Comparar contra un comando en vivo
 
 ```bash
 ss -tlnp | diff - /tmp/ss-ayer.txt
@@ -317,7 +317,7 @@ ss -tlnp | diff - /tmp/ss-ayer.txt
 
 El `-` le dice a `diff` que uno de los lados viene de stdin. Útil para comparar el estado actual contra una foto guardada.
 
-### 8. Qué cambió desde una fecha
+### 🕓 8. Qué cambió desde una fecha
 
 ```bash
 find /etc -newer /var/backups/etc-stamp -type f > /tmp/tocados.txt
@@ -328,7 +328,7 @@ diff -rq /var/backups/etc-2026-11-20 /etc | grep -F -f /tmp/tocados.txt
 
 ## 🔍 Uso en troubleshooting
 
-### "Funcionaba ayer y hoy no"
+### 🤔 "Funcionaba ayer y hoy no"
 
 1. Comparar la config actual contra el backup:
 
@@ -349,7 +349,7 @@ diff -rq /var/backups/etc-2026-11-20 /etc | grep -F -f /tmp/tocados.txt
    diff -rq /var/backups/etc-2026-11-20 /etc
    ```
 
-### "¿Alguien tocó `/etc`?"
+### 🕵️ "¿Alguien tocó `/etc`?"
 
 ```bash
 diff -rq /var/backups/etc-2026-11-20 /etc | grep -v '^Files .* differ$'
@@ -357,7 +357,7 @@ diff -rq /var/backups/etc-2026-11-20 /etc | grep -v '^Files .* differ$'
 
 Filtrar los "differ" deja solo los archivos nuevos o eliminados: la señal más fuerte de un cambio manual.
 
-### "¿El backup está completo?"
+### 💾 "¿El backup está completo?"
 
 ```bash
 diff -rN /srv/data /mnt/backup/data | grep '^Only in /srv/data'
@@ -365,7 +365,7 @@ diff -rN /srv/data /mnt/backup/data | grep '^Only in /srv/data'
 
 Si no hay salida, el backup tiene todos los archivos del origen.
 
-### "¿Dos servidores están configurados igual?"
+### ⚖️ "¿Dos servidores están configurados igual?"
 
 ```bash
 ssh web01 'cat /etc/nginx/nginx.conf' > /tmp/a.conf
@@ -373,7 +373,7 @@ ssh web02 'cat /etc/nginx/nginx.conf' > /tmp/b.conf
 diff -u /tmp/a.conf /tmp/b.conf
 ```
 
-### "¿Este binario cambió?"
+### 🔬 "¿Este binario cambió?"
 
 `diff` no es la herramienta. Usá checksums:
 
@@ -382,7 +382,7 @@ sha256sum /usr/local/bin/app
 # comparar contra el valor publicado o el de la baseline
 ```
 
-### "Hay demasiadas diferencias y no veo nada"
+### 🙈 "Hay demasiadas diferencias y no veo nada"
 
 Reducir el ruido antes de leer:
 
@@ -463,7 +463,7 @@ diff -u /tmp/web01.txt /tmp/web02.txt
 
 ## ⚠️ Errores comunes
 
-### 1. `set -e` aborta cuando `diff` encuentra diferencias
+### 🧨 1. `set -e` aborta cuando `diff` encuentra diferencias
 
 ```bash
 set -e
@@ -480,7 +480,7 @@ else
 fi
 ```
 
-### 2. Usar `diff` con binarios
+### 🔢 2. Usar `diff` con binarios
 
 ```bash
 diff app app.bak
@@ -489,11 +489,11 @@ diff app app.bak
 
 Usá `cmp -l` o `sha256sum`.
 
-### 3. Olvidar `-N` y creer que el backup está completo
+### 📁 3. Olvidar `-N` y creer que el backup está completo
 
 Sin `-N`, un archivo que existe en el origen y no en el destino aparece como `Only in`, pero `diff` igual devuelve 1. `-N` convierte el ausente en vacío y muestra el contenido completo: útil para parches y para verificar.
 
-### 4. Comparar directorios sin `-r`
+### 📂 4. Comparar directorios sin `-r`
 
 ```bash
 diff /etc/nginx /etc/nginx.bak
@@ -502,7 +502,7 @@ diff /etc/nginx /etc/nginx.bak
 
 No compara el contenido. Agregá `-r`.
 
-### 5. Esperar que `diff` detecte cambios de permisos
+### 🔐 5. Esperar que `diff` detecte cambios de permisos
 
 `diff` compara contenido. Un `chmod 777` no aparece. Para metadata:
 
@@ -515,7 +515,7 @@ diff -u /var/lib/baseline/etc-meta.txt /tmp/etc-meta-ahora.txt
 
 > `stat -c` es GNU/BusyBox; en BSD/macOS usá `stat -f '%Lp %Su %Sg %N'`. Lo que importa es normalizar el formato antes de comparar.
 
-### 6. Aplicar un parche en el nivel de ruta equivocado
+### 🩹 6. Aplicar un parche en el nivel de ruta equivocado
 
 ```bash
 patch -p1 < nginx.patch
@@ -524,11 +524,11 @@ patch -p1 < nginx.patch
 
 Contá los componentes de la ruta en la cabecera: `a/nginx.conf` → `-p1`; `nginx.conf` → `-p0`.
 
-### 7. Confiar en el orden de líneas
+### 🔀 7. Confiar en el orden de líneas
 
 `diff` compara por posición. Si el archivo se regeneró con las líneas en otro orden, todo aparece como cambiado. Normalizá con `sort` antes de comparar listas.
 
-### 8. Ignorar el exit code 2
+### 🚫 8. Ignorar el exit code 2
 
 Un `2` no es "hay diferencias": es un error (archivo inexistente, permisos). Un script que trata `2` como `1` va a reportar drift donde en realidad hay un problema de acceso.
 

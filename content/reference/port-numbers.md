@@ -1,8 +1,8 @@
 ---
-title: "Puertos TCP/UDP — Referencia rápida"
+title: "🔌 Puertos TCP/UDP — Referencia rápida"
 section: "reference"
 ---
-# Puertos TCP/UDP — Referencia rápida
+# 🔌 Puertos TCP/UDP — Referencia rápida
 
 Puertos comunes para troubleshooting de red y seguridad. Usar con `ss`, `netstat`, `lsof`, `nmap`.
 
