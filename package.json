@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.6.0",
   "description": "Sitio de estudio mobile-first para administración de servidores Linux y redes",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "lint:icons": "node scripts/lint-icons.mjs",
     "content": "node scripts/prepare-content.mjs"
   },
   "dependencies": {
@@ -16,6 +18,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.16",
     "astro": "^7.4.13",
+    "github-slugger": "^2.0.0",
     "mermaid": "^12.3.0",
     "tailwindcss": "^4.1.16"
   },

@@ -6,6 +6,7 @@ import { mdastMermaid } from './src/plugins/mdast-mermaid.mjs';
 import { mdastRemoveH1 } from './src/plugins/mdast-remove-h1.mjs';
 import { mdastSim } from './src/plugins/mdast-sim.mjs';
 import { hastTableWrap } from './src/plugins/hast-table-wrap.mjs';
+import { hastCleanHeadingIds } from './src/plugins/hast-clean-heading-ids.mjs';
 
 export default defineConfig({
   site: 'https://lumusitech.github.io',
@@ -15,7 +16,7 @@ export default defineConfig({
     // Los plugins se declaran como plugins mdast en vez de remark.
     processor: satteri({
       mdastPlugins: [mdastRemoveH1, mdastCards, mdastMermaid, mdastSim],
-      hastPlugins: [hastTableWrap],
+      hastPlugins: [hastCleanHeadingIds, hastTableWrap],
       // Habilita las directivas `:::nombre{...}` usadas por `sim`.
       features: { directive: true },
     }),
