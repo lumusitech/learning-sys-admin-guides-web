@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import BottomNav from '../components/BottomNav.astro';
 import CardsToolbar from '../components/CardsToolbar.astro';
+import PageSearch from '../components/PageSearch.astro';
 import SidebarNav from '../components/SidebarNav.astro';
 import Toc, { type Heading } from '../components/Toc.astro';
 import { getNav, sectionLabel, type NavEntry } from '../lib/nav';
@@ -57,6 +58,8 @@ const nav = await getNav();
         </div>
         <h1 class="text-2xl font-bold tracking-tight lg:text-3xl">{title}</h1>
       </header>
+
+      <PageSearch />
 
       {hasCards && <CardsToolbar />}
 

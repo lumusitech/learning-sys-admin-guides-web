@@ -1,3 +1,5 @@
+import { initGlobalSearch, initLocalSearch } from './search';
+
 /**
  * Mejoras de cliente: tema, copiar código, progreso de lectura,
  * mermaid, filtro local de cards, expandir/colapsar, buscador y drawer.
@@ -152,36 +154,6 @@ if (document.querySelector('pre.mermaid')) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Filtro local de cards                                               */
-/* ------------------------------------------------------------------ */
-
-const filterInput = document.querySelector<HTMLInputElement>('[data-local-filter]');
-
-if (filterInput) {
-  const cards = Array.from(document.querySelectorAll<HTMLDetailsElement>('.cards > details'));
-  const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
-  const counter = document.querySelector<HTMLElement>('[data-filter-count]');
-
-  const apply = (): void => {
-    const query = filterInput.value.trim().toLowerCase();
-    let visible = 0;
-
-    for (const card of cards) {
-      const text = (card.querySelector('summary')?.textContent ?? '').toLowerCase();
-      const match = query === '' || text.includes(query);
-      card.hidden = !match;
-      if (match) visible += 1;
-    }
-
-    if (empty) empty.hidden = visible > 0;
-    if (counter) counter.textContent = String(visible);
-  };
-
-  filterInput.addEventListener('input', apply);
-  apply();
-}
-
-/* ------------------------------------------------------------------ */
 /* Expandir / colapsar                                                 */
 /* ------------------------------------------------------------------ */
 
@@ -200,88 +172,6 @@ document.querySelectorAll<HTMLButtonElement>('[data-collapse-all]').forEach((but
     });
   });
 });
-
-/* ------------------------------------------------------------------ */
-/* Buscador global (UI, sin fuzzy todavía)                             */
-/* ------------------------------------------------------------------ */
-
-interface SearchItem {
-  title: string;
-  href: string;
-  section: string;
-}
-
-const dialog = document.querySelector<HTMLDialogElement>('[data-search-dialog]');
-const searchInput = document.querySelector<HTMLInputElement>('[data-search-input]');
-const searchResults = document.querySelector<HTMLElement>('[data-search-results]');
-const searchIndex = document.querySelector<HTMLScriptElement>('[data-search-index]');
-
-let items: SearchItem[] = [];
-
-if (searchIndex?.textContent) {
-  try {
-    const parsed: unknown = JSON.parse(searchIndex.textContent);
-    if (Array.isArray(parsed)) items = parsed as SearchItem[];
-  } catch {
-    items = [];
-  }
-}
-
-function renderResults(query: string): void {
-  if (!searchResults) return;
-
-  const needle = query.trim().toLowerCase();
-  const matches = needle === ''
-    ? items.slice(0, 8)
-    : items.filter((item) => item.title.toLowerCase().includes(needle)).slice(0, 20);
-
-  searchResults.replaceChildren();
-
-  if (matches.length === 0) {
-    const empty = document.createElement('p');
-    empty.className = 'px-3 py-6 text-center text-sm';
-    empty.textContent = 'Sin resultados.';
-    searchResults.appendChild(empty);
-    return;
-  }
-
-  for (const item of matches) {
-    const link = document.createElement('a');
-    link.href = item.href;
-    link.className = 'search-result';
-    link.textContent = item.title;
-    const badge = document.createElement('span');
-    badge.className = 'search-result-section';
-    badge.textContent = item.section;
-    link.appendChild(badge);
-    searchResults.appendChild(link);
-  }
-}
-
-if (dialog && searchInput) {
-  const open = (): void => {
-    if (!dialog.open) dialog.showModal();
-    searchInput.focus();
-    renderResults(searchInput.value);
-  };
-
-  document.querySelectorAll<HTMLButtonElement>('[data-search-open]').forEach((button) => {
-    button.addEventListener('click', open);
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-      event.preventDefault();
-      open();
-    }
-  });
-
-  searchInput.addEventListener('input', () => renderResults(searchInput.value));
-
-  dialog.addEventListener('click', (event) => {
-    if (event.target === dialog) dialog.close();
-  });
-}
 
 /* ------------------------------------------------------------------ */
 /* Drawer mobile                                                       */
@@ -388,3 +278,10 @@ if (tocLinks.length > 0) {
 
   for (const heading of headings) observer.observe(heading);
 }
+
+/* ------------------------------------------------------------------ */
+/* Búsqueda (global + local)                                           */
+/* ------------------------------------------------------------------ */
+
+initGlobalSearch();
+initLocalSearch();
