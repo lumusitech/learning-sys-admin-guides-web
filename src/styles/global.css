@@ -382,6 +382,40 @@ html[data-theme='dark'] .astro-code span {
   border-color: var(--c-accent);
 }
 
+/* Copiar un Quick command inline (`p` con un único `<code>`). */
+.prose .quick-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-left: 0.4rem;
+  padding: 0;
+  vertical-align: middle;
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  background-color: var(--c-surface);
+  color: var(--c-muted);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+}
+
+.prose .quick-copy svg {
+  display: block;
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.prose .quick-copy:hover {
+  color: var(--c-fg);
+  background-color: var(--c-surface-2);
+}
+
+.prose .quick-copy[data-copied="true"] {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
 /* Dentro de una simulación el `.sim-body` ya aporta su padding:
    evitamos el margen extra que arrastra `.code-wrap`. */
 .prose .sim-body .code-wrap {

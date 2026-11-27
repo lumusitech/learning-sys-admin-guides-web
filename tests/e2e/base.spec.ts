@@ -127,6 +127,17 @@ test('el botón de copiar reporta el estado copiado', async ({ page }) => {
   await expect(button).toHaveAttribute('aria-label', 'Copiado');
 });
 
+test('el Quick command inline tiene botón de copiar', async ({ page }) => {
+  await page.goto(DIFF_GUIDE);
+
+  const button = page.locator('.prose p .quick-copy').first();
+  await expect(button).toBeVisible();
+  await expect(button).toHaveAttribute('aria-label', 'Copiar el comando');
+
+  await button.click();
+  await expect(button).toHaveAttribute('data-copied', 'true');
+});
+
 test('el botón de copiar no se solapa con la salida simulada', async ({ page }) => {
   await page.goto(DIFF_GUIDE);
 
