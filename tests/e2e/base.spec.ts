@@ -48,6 +48,10 @@ test('la navegación lateral llega a una guía', async ({ page }) => {
 test('el menú de índice abre y marca la sección activa', async ({ page }) => {
   await page.goto(DRIFT_SCENARIO);
 
+  // El diagrama mermaid altera el layout al terminar de renderizar; esperamos
+  // a que se estabilice antes de medir la posición de los encabezados.
+  await expect(page.locator('pre.mermaid svg').first()).toBeVisible({ timeout: 15_000 });
+
   const toggle = page.locator('[data-toc-menu-toggle]');
   const panel = page.locator('[data-toc-menu-panel]');
 
@@ -100,6 +104,15 @@ test('un bloque :::sim abre y muestra su salida', async ({ page }) => {
   await expect(sim).toHaveAttribute('open', '');
   await expect(sim.locator('.sim-output').first()).toBeVisible();
   await expect(sim.locator('.sim-output').first()).toContainText('diff -q');
+});
+
+test('un callout se renderiza con su estado y título', async ({ page }) => {
+  await page.goto(DIFF_GUIDE);
+
+  const callout = page.locator('.callout[data-state="warning"]').first();
+  await expect(callout).toBeVisible();
+  await expect(callout.locator('.callout-title')).toHaveText('Exit code');
+  await expect(callout).toContainText('exit code 1');
 });
 
 test('el botón de copiar reporta el estado copiado', async ({ page }) => {
