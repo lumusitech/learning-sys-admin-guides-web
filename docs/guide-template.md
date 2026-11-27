@@ -7,6 +7,7 @@ El lint también exige icono en el `title` del frontmatter.
 Reglas rápidas:
 
 - Un icono = un significado (ver el set canónico).
+- El título de página y los `h2` llevan icono obligatorio; en `h3` es opcional.
 - Español neutro con "tú" imperativo ("guarda", "usa", "ejecuta"); sin voseo ni regionalismos.
 - Un idea por sección; el resto va en subsecciones `h3`.
 - Todo comando con salida breve puede llevar una simulación (`:::sim`).

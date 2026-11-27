@@ -156,4 +156,4 @@ Tasks to close the phase, in order:
 
 ## Next step
 
-Fases 1–3 implementadas (Fase 2 mergeada en #19; allowlist y sync en PR aparte). `pnpm verify` verde. Lo que resta es la **migración de contenido**: importar los 159 documentos upstream requiere llevar iconos a los títulos, español neutro y cabeceras a `meta`. Un audit de la importación cruda da 3231 problemas de iconos y 155 marcas de voseo, así que `pnpm sync` copia pero el contenido se adapta y revisa antes de commitear.
+Fase de contenido en curso: **`guides` importado y migrado (74 guías)**. Faltan `scenarios`, `concepts`, `reference` y `labs`. Para cada sección: `pnpm sync --section=<s> --skip-existing` + `pnpm migrate:content --section=<s>` + `pnpm verify`, revisando el diff (los iconos de `h2` salen de reglas heurísticas y pueden necesitar ajuste semántico).

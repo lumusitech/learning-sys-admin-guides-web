@@ -6,16 +6,17 @@ en este set, se agrega aquí **antes** de usarlo, con su significado único.
 
 ## Cómo se aplica
 
-- **Título de página** (frontmatter `title`): el icono del tema de la guía.
-- **`h2`**: la categoría de la sección.
-- **`h3`**: el detalle dentro de la categoría.
+- **Título de página** (frontmatter `title`) y **`h1`**: el icono del tema de la guía.
+- **`h2`**: la categoría de la sección (obligatorio).
+- **`h3`+**: opcional; úsalo cuando aporte significado.
 - Siempre con un espacio después del icono: `## 🧠 ¿Qué es?`.
 - No se repite un icono con dos significados distintos. Se permiten "familias"
   cuando el matiz es el mismo (por ejemplo 💾 = respaldo en cualquier contexto,
   🔐 = seguridad/integridad/permisos).
 
-El lint `pnpm lint:icons` (corre en CI) falla si un título no tiene icono, si usa
-uno fuera de este set o si falta el espacio. El set se lee de este archivo.
+El lint `pnpm lint:icons` (corre en CI) falla si el título de página o un `h2`
+no tiene icono, si usa uno fuera de este set o si falta el espacio. `h3` y
+niveles inferiores son opcionales. El set se lee de este archivo.
 
 ## Set canónico
 

@@ -4,6 +4,7 @@
  *
  * Uso:
  *   pnpm sync                    # clona el upstream en un temporal y sincroniza
+ *   pnpm sync --section=guides   # solo una sección
  *   pnpm sync --source=../ruta   # usa un checkout local
  *   UPSTREAM_DIR=../ruta pnpm sync
  *
@@ -20,6 +21,7 @@ import { UPSTREAM_URL } from './lib/content-constants.mjs';
 
 const argv = process.argv.slice(2);
 const sourceArg = argv.find((arg) => arg.startsWith('--source='))?.slice('--source='.length);
+const sectionArg = argv.find((arg) => arg.startsWith('--section='));
 const explicit = sourceArg ?? process.env.UPSTREAM_DIR ?? null;
 
 let source = explicit;
@@ -42,7 +44,10 @@ if (!source) {
 }
 
 try {
-  const run = spawnSync(process.execPath, ['scripts/prepare-content.mjs', source], {
+  const childArgs = ['scripts/prepare-content.mjs', source];
+  if (sectionArg) childArgs.push(sectionArg);
+  if (argv.includes('--skip-existing')) childArgs.push('--skip-existing');
+  const run = spawnSync(process.execPath, childArgs, {
     stdio: 'inherit',
   });
   if (run.status !== 0) process.exit(run.status ?? 1);
