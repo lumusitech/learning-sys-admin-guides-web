@@ -16,6 +16,7 @@
     "lint:icons": "node scripts/lint-icons.mjs",
     "lint:language": "node scripts/lint-language.mjs",
     "lint:content": "node scripts/lint-content.mjs",
+    "sync:allowlist": "node scripts/sync-allowlist.mjs",
     "search:index": "node scripts/build-search-index.mjs",
     "content": "node scripts/prepare-content.mjs",
     "new:guide": "node scripts/new-guide.mjs",
