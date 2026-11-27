@@ -741,9 +741,11 @@ html[data-theme='dark'] .astro-code span {
    ============================================================ */
 
 .toc-menu-panel {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  /* Se ancla al borde derecho de la topbar (no al botón): así el panel cuelga
+     del borde real de la interfaz y no de un vértice intermedio. */
+  position: fixed;
+  top: calc(3.5rem + 0.5rem);
+  right: max(0.75rem, calc((100vw - 72rem) / 2 + 0.75rem));
   z-index: 60;
   width: min(18rem, calc(100vw - 1.5rem));
   max-height: min(70vh, 32rem);
@@ -753,6 +755,14 @@ html[data-theme='dark'] .astro-code span {
   border-radius: 12px;
   background-color: var(--c-surface);
   box-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
+}
+
+@media (max-width: 639px) {
+  .toc-menu-panel {
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+  }
 }
 
 .toc-menu-title {
