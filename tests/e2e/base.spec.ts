@@ -106,13 +106,32 @@ test('el botón de copiar reporta el estado copiado', async ({ page }) => {
   await page.goto(DIFF_GUIDE);
 
   const wrap = page.locator('.code-wrap').first();
-  const button = wrap.locator('.copy-btn');
-  await wrap.hover();
+  const button = wrap.locator('.code-action[data-action="copy"]');
 
-  await expect(button).toHaveText('Copiar');
+  await expect(button).toHaveAttribute('aria-label', 'Copiar el bloque de código');
   await button.click();
-  await expect(button).toHaveText('Copiado');
   await expect(button).toHaveAttribute('data-copied', 'true');
+  await expect(button).toHaveAttribute('aria-label', 'Copiado');
+});
+
+test('el botón de copiar no se solapa con la salida simulada', async ({ page }) => {
+  await page.goto(DIFF_GUIDE);
+
+  const sim = page.locator('.sim').first();
+  await sim.locator('summary.sim-toggle').click();
+
+  const wrap = sim.locator('.code-wrap').first();
+  const button = wrap.locator('.code-action[data-action="copy"]');
+  const output = wrap.locator('.sim-output');
+
+  const buttonBox = await button.boundingBox();
+  const outputBox = await output.boundingBox();
+  expect(buttonBox).not.toBeNull();
+  expect(outputBox).not.toBeNull();
+  if (buttonBox && outputBox) {
+    // La barra de acciones queda por encima del bloque de salida.
+    expect(buttonBox.y + buttonBox.height).toBeLessThanOrEqual(outputBox.y + 1);
+  }
 });
 
 test('el tema persiste tras recargar', async ({ page }) => {
