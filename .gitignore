@@ -6,3 +6,5 @@ dist/
 .DS_Store
 *.log
 public/search-index.json
+playwright-report/
+test-results/
