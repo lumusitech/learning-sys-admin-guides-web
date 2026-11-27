@@ -87,7 +87,7 @@ Tasks to close the phase, in order:
 1. Run `pnpm lint:icons`, `pnpm lint:language`, `pnpm check`, `pnpm test`, `pnpm test:e2e`.
 2. STOP, present the changes for review, and suggest commit/PR messages (Spanish).
 
-### Phase 2: Clean code and DRY components
+### Phase 2: Clean code and DRY components — IMPLEMENTED (PR #19)
 
 Objective: split the client monoliths into single-purpose modules and stop hand-writing repeated guide headers, with zero behavior change.
 
@@ -118,7 +118,9 @@ Tasks to close the phase, in order:
 1. Run `pnpm lint:icons`, `pnpm lint:language`, `pnpm check`, `pnpm test`, `pnpm test:e2e`.
 2. STOP, present the changes for review, and suggest commit/PR messages (Spanish).
 
-### Phase 3: Replicability, integrity and final hardening
+### Phase 3: Replicability, integrity and final hardening — IMPLEMENTED (this PR)
+
+> Status: `order` eliminado del esquema y del template (el orden sigue el `id`). `new:guide` y `lint:content` están implementados; los links bien formados a ids ausentes son avisos (pendientes de sync), los malformados son error. `pnpm verify` encadena todo y CI corre `lint:content` tras el build. La accesibilidad (axe) y los presupuestos CSS/JS viven en `tests/e2e/quality.spec.ts`.
 
 Objective: creating a new guide is one command, broken content fails CI, and the base is documented and accessible enough to freeze before content scales.
 
@@ -154,4 +156,4 @@ Tasks to close the phase, in order:
 
 ## Next step
 
-Phases 1–2 scope is approved. Phase 1 is complete (PR #17); implement Phase 2 (clean code and DRY components) with `/plan-phases-implement`, keeping the Phase 1 e2e suite green. Phase 3 follows after Phase 2 is reviewed.
+Fases 1–3 implementadas y Fase 2 mergeada (#19). Falta revisar y mergear esta PR de Fase 3; después, correr `pnpm verify` sobre `main`. Con eso la base queda lista para cargar contenido en bloque. El trabajo restante es el sync upstream (`scripts/prepare-content.mjs`) y decidir si se commitea un listado de ids pendientes.
