@@ -120,7 +120,7 @@ Tasks to close the phase, in order:
 
 ### Phase 3: Replicability, integrity and final hardening — IMPLEMENTED (this PR)
 
-> Status: `order` eliminado del esquema y del template (el orden sigue el `id`). `new:guide` y `lint:content` están implementados; los links bien formados a ids ausentes son avisos (pendientes de sync), los malformados son error. `pnpm verify` encadena todo y CI corre `lint:content` tras el build. La accesibilidad (axe) y los presupuestos CSS/JS viven en `tests/e2e/quality.spec.ts`.
+> Status: `order` eliminado del esquema y del template (el orden sigue el `id`). `new:guide` y `lint:content` están implementados; los links a ids que no están en `content/` ni en `scripts/pending-sync.json` son error (typo), y los que sí están en el allowlist son aviso (pendiente de sync). El allowlist se genera del listado upstream con `pnpm sync:allowlist <sourceDir>` y `prepare-content` lo refresca. El sync quedó automatizado con `pnpm sync` (clona el upstream) y un workflow semanal detecta drift del allowlist. `pnpm verify` encadena todo y CI corre `lint:content` tras el build. La accesibilidad (axe) y los presupuestos CSS/JS viven en `tests/e2e/quality.spec.ts`.
 
 Objective: creating a new guide is one command, broken content fails CI, and the base is documented and accessible enough to freeze before content scales.
 
@@ -156,4 +156,4 @@ Tasks to close the phase, in order:
 
 ## Next step
 
-Fases 1–3 implementadas y Fase 2 mergeada (#19). Falta revisar y mergear esta PR de Fase 3; después, correr `pnpm verify` sobre `main`. Con eso la base queda lista para cargar contenido en bloque. El trabajo restante es el sync upstream (`scripts/prepare-content.mjs`) y decidir si se commitea un listado de ids pendientes.
+Fases 1–3 implementadas (Fase 2 mergeada en #19; allowlist y sync en PR aparte). `pnpm verify` verde. Lo que resta es la **migración de contenido**: importar los 159 documentos upstream requiere llevar iconos a los títulos, español neutro y cabeceras a `meta`. Un audit de la importación cruda da 3231 problemas de iconos y 155 marcas de voseo, así que `pnpm sync` copia pero el contenido se adapta y revisa antes de commitear.

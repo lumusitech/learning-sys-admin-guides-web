@@ -27,6 +27,8 @@ pnpm test           # unitarios
 pnpm test:e2e       # e2e + accesibilidad + presupuestos
 pnpm verify         # toda la cadena
 pnpm new:guide <section> <slug>  # scaffold de un documento
+pnpm sync           # sincroniza contenido + allowlist desde upstream
+pnpm sync:allowlist <sourceDir>  # refresca el allowlist de ids upstream
 ```
 
 Mapa de módulos, flujo de datos y ruta del contribuidor en
@@ -53,4 +55,7 @@ Mapa de módulos, flujo de datos y ruta del contribuidor en
 
 - `main` protegida: solo PR con al menos una aprobación.
 - Ramas `feat/*`, `fix/*`, `content/*`, `chore/*`.
-- El markdown de `content/` se sincroniza con `scripts/prepare-content.mjs`.
+- El contenido se sincroniza con `pnpm sync` (clona el upstream) o
+  `pnpm sync --source=<dir>`; reescribe links y refresca
+  `scripts/pending-sync.json`. La importación masiva requiere migración de
+  iconos/idioma/cabeceras y se revisa aparte.

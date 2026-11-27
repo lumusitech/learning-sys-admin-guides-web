@@ -9,3 +9,6 @@
 export const SECTIONS = ['guides', 'scenarios', 'concepts', 'reference', 'labs'];
 
 export const LEVELS = ['Básico', 'Intermedio', 'Avanzado'];
+
+/** Repo de origen del contenido (usado por `pnpm sync`). */
+export const UPSTREAM_URL = 'https://github.com/lumusitech/learning-sys-admin-guides.git';
