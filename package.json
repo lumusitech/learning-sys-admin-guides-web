@@ -10,6 +10,9 @@
     "build": "pnpm search:index && astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:all": "pnpm test && pnpm test:e2e",
     "lint:icons": "node scripts/lint-icons.mjs",
     "lint:language": "node scripts/lint-language.mjs",
     "search:index": "node scripts/build-search-index.mjs",
@@ -26,8 +29,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.10",
     "hast-util-to-html": "^9.0.7",
     "mdast-util-to-hast": "^13.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.2"
   }
 }
