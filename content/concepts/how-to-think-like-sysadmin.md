@@ -146,7 +146,9 @@ El objetivo no es "probar cosas", sino **entender el sistema**.
 | Procesos en `S` (sleeping) | Mayoría | Minoría → sistema idle anómalo |
 | Fork rate | < 100/s | > 1.000/s → fork bomb o app mal escrita |
 
-> **⚠️ Nota sobre los umbrales**: Los valores de esta tabla son referenciales y dependen del hardware. Un servidor con 64 cores puede tener load average de 30 sin problema. Un servidor con 2 cores a load 5 está saturado. **Establece tu propia baseline** comparando el sistema en estado normal vs bajo carga. Los umbrales absolutos son punto de partida, no verdad absoluta.
+:::callout{state=warning label="Nota sobre los umbrales"}
+Los valores de esta tabla son referenciales y dependen del hardware. Un servidor con 64 cores puede tener load average de 30 sin problema. Un servidor con 2 cores a load 5 está saturado. **Establece tu propia baseline** comparando el sistema en estado normal vs bajo carga. Los umbrales absolutos son punto de partida, no verdad absoluta.
+:::
 
 ---
 

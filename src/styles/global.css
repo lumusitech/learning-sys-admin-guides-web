@@ -41,6 +41,7 @@
 
   --c-success: #4ade80;
   --c-danger: #fb7185;
+  --c-warning: #ffb454;
 
   --content-width: 46rem;
 }
@@ -64,6 +65,7 @@
 
   --c-success: #15803d;
   --c-danger: #be123c;
+  --c-warning: #b45309;
 }
 
 /* Acento por sección */
@@ -242,6 +244,59 @@
 .prose :where(blockquote p:first-of-type)::before,
 .prose :where(blockquote p:last-of-type)::after {
   content: "";
+}
+
+/* ============================================================
+   Callouts (generados por mdast-callout)
+   ============================================================ */
+
+.prose .callout {
+  margin-block: 1.25rem;
+  border: 1px solid var(--c-line);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background-color: var(--c-surface);
+  padding: 0.85rem 1rem;
+}
+
+.prose .callout-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prose .callout-body > :first-child {
+  margin-top: 0;
+}
+
+.prose .callout-body > :last-child {
+  margin-bottom: 0;
+}
+
+.prose .callout[data-state='warning'] {
+  border-left-color: var(--c-warning);
+}
+
+.prose .callout[data-state='warning'] .callout-title {
+  color: var(--c-warning);
+}
+
+.prose .callout[data-state='tip'] {
+  border-left-color: var(--c-success);
+}
+
+.prose .callout[data-state='tip'] .callout-title {
+  color: var(--c-success);
+}
+
+.prose .callout[data-state='danger'] {
+  border-left-color: var(--c-danger);
+}
+
+.prose .callout[data-state='danger'] .callout-title {
+  color: var(--c-danger);
 }
 
 /* ============================================================

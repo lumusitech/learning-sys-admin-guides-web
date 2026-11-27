@@ -1,0 +1,91 @@
+---
+import { route } from '../lib/nav';
+import { inlineMarkdown } from '../lib/inline-markdown';
+
+/**
+ * Cabecera de metadatos de un guide/scenario.
+ *
+ * Las filas llegan del frontmatter (`meta`) para no repetir el bloque a mano
+ * en cada documento. Los enlaces internos se resuelven con `route()`, así el
+ * markdown no necesita conocer la base del sitio.
+ */
+
+export interface MetaRow {
+  label: string;
+  value?: string;
+  links?: Array<{ id: string; label?: string }>;
+}
+
+interface Props {
+  rows?: MetaRow[];
+}
+
+const { rows = [] } = Astro.props;
+---
+
+{
+  rows.length > 0 && (
+    <dl class="doc-meta">
+      {rows.map((row) => (
+        <div class="doc-meta-row">
+          <dt>{row.label}</dt>
+          <dd>
+            {row.value ? <span set:html={inlineMarkdown(row.value)} /> : null}
+            {row.links && row.links.length > 0 && (
+              <span class="doc-meta-links">
+                {(row.links ?? []).map((link, index, all) => (
+                  <>
+                    <a href={route(link.id)}>{link.label ?? link.id}</a>
+                    {index < all.length - 1 ? <span aria-hidden="true">, </span> : null}
+                  </>
+                ))}
+              </span>
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  .doc-meta {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0 0 1.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .doc-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+  }
+
+  .doc-meta dt {
+    margin: 0;
+    font-weight: 600;
+    color: var(--c-muted);
+  }
+
+  .doc-meta dd {
+    margin: 0;
+    color: var(--c-fg);
+  }
+
+  .doc-meta a {
+    color: var(--c-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .doc-meta code {
+    padding: 0.05rem 0.3rem;
+    border: 1px solid var(--c-line);
+    border-radius: 5px;
+    background-color: var(--c-surface-2);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+</style>

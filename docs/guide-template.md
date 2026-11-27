@@ -10,6 +10,11 @@ Reglas rápidas:
 - Español neutro con "tú" imperativo ("guarda", "usa", "ejecuta"); sin voseo ni regionalismos.
 - Un idea por sección; el resto va en subsecciones `h3`.
 - Todo comando con salida breve puede llevar una simulación (`:::sim`).
+- Los metadatos del encabezado (requisitos, herramientas, archivos, enlaces) van en
+  `meta:` del frontmatter; no los escribas a mano en el cuerpo.
+- Para advertencias usa `:::callout{state=warning|tip|danger label="..."}` en vez de blockquotes.
+- El orden de la navegación sigue la ruta del archivo (`id`). Si necesitas un orden
+  pedagógico, usa prefijos numéricos en el nombre (`01-...`, `02-...`).
 
 ---
 
@@ -18,14 +23,16 @@ Reglas rápidas:
 title: "⚡ nombre — Qué resuelve en una frase"
 level: "Básico" # Básico | Intermedio | Avanzado
 section: "guides" # guides | scenarios | concepts | reference
-order: 10
+meta:
+  - label: "Requisitos"
+    value: "acceso a un host Linux con `herramienta` instalada"
+  - label: "Ver escenarios relacionados"
+    links:
+      - id: "scenarios/system/01-..."
+        label: "system/01-..."
 ---
 
 # ⚡ nombre — Qué resuelve en una frase
-
-**Nivel:** 🟢 Básico
-**Requisitos:** acceso a un host Linux con `herramienta` instalada
-**Ver escenarios relacionados:** [`system/01-...`](/learning-sys-admin-guides-web/scenarios/system/01-.../)
 
 ---
 
@@ -33,7 +40,9 @@ order: 10
 
 `herramienta --opcion /ruta/al/archivo`
 
-> ⚠️ Advertencia clave sobre exit codes, permisos o efectos secundarios.
+:::callout{state=warning label="Atención"}
+Advertencia clave sobre exit codes, permisos o efectos secundarios.
+:::
 
 ---
 
@@ -125,7 +134,7 @@ Explicación y corrección.
 
 ## 🔗 Referencias internas
 
-- [`guia-relacionada`](/learning-sys-admin-guides-web/guides/guia-relacionada/) — por qué se relaciona
+- [`guia-relacionada`](../guides/guia-relacionada.md) — por qué se relaciona
 ```
 
 ---
@@ -134,6 +143,7 @@ Explicación y corrección.
 
 - [ ] `pnpm lint:icons` en verde (todos los títulos con icono del set).
 - [ ] `pnpm check` y `pnpm build` en verde.
+- [ ] `pnpm test:all` en verde (unitarios + e2e).
 - [ ] Simulaciones de éxito **y** de error en los comandos clave.
 - [ ] Tablas con `<!-- cards -->` sólo si son comparaciones: el resto van como tabla normal.
 - [ ] Probado en móvil (320-412 px): sin scroll horizontal de página, tablas con scroll propio.

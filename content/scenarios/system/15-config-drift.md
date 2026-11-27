@@ -2,13 +2,15 @@
 title: "🧩 Escenario: Config drift — cambios no autorizados en el servidor"
 level: "Intermedio"
 section: "scenarios"
+meta:
+  - label: "Dominio"
+    value: "system"
+  - label: "Herramientas"
+    value: "`find`, `stat`, `diff`, `git`, `awk`"
+  - label: "Archivos"
+    value: "`labs/docker-compose.broken.yml`"
 ---
 # 🧩 Escenario: Config drift — cambios no autorizados en el servidor
-
-**Dominio:** system
-**Nivel:** 🟡 Intermedio
-**Herramientas:** `find`, `stat`, `diff`, `git`, `awk`
-**Archivos:** `labs/docker-compose.broken.yml`
 
 ---
 

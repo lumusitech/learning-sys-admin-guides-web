@@ -2,11 +2,11 @@
 title: "🔍 Dahua — Descubrir dispositivos en la red"
 level: "Básico"
 section: "guides"
+meta:
+  - label: "Herramientas"
+    value: "`nmap`, `arp-scan`, `curl`, `dnsmasq`"
 ---
 # 🔍 Dahua — Descubrir dispositivos en la red
-
-**Nivel:** 🟢 Básico
-**Herramientas:** `nmap`, `arp-scan`, `curl`, `dnsmasq`
 
 ---
 
