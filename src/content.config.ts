@@ -8,7 +8,17 @@ const docs = defineCollection({
     description: z.string().optional(),
     level: z.string().optional(),
     section: z.string().optional(),
-    order: z.number().optional(),
+    meta: z
+      .array(
+        z.object({
+          label: z.string(),
+          value: z.string().optional(),
+          links: z
+            .array(z.object({ id: z.string(), label: z.string().optional() }))
+            .optional(),
+        }),
+      )
+      .optional(),
     draft: z.boolean().optional(),
   }),
 });

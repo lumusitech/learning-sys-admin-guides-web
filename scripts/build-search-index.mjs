@@ -13,6 +13,7 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { SITE_BASE } from '../src/lib/site.mjs';
+import { normalizeDocument } from '../src/lib/search-index.mjs';
 
 const CONTENT = 'content';
 const OUTPUT = 'public/search-index.json';
@@ -98,13 +99,13 @@ function buildDocument(path) {
   const body = front ? raw.slice(front[0].length) : raw;
   const id = relative(CONTENT, path).replace(/\.md$/, '');
 
-  return {
+  return normalizeDocument({
     id,
     title: field(frontmatter, 'title') || id,
     section: field(frontmatter, 'section') || id.split('/')[0] || '',
     url: `${SITE_BASE}/${id}/`.replace(/\/{2,}/g, '/'),
     blocks: toBlocks(body),
-  };
+  });
 }
 
 const documents = [...markdownFiles(CONTENT)].sort().map(buildDocument);

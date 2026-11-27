@@ -2,12 +2,19 @@
 title: "🔀 diff — Guía completa de comparación de archivos"
 level: "Intermedio"
 section: "guides"
+meta:
+  - label: "Archivos de práctica"
+    value: "Funciona en cualquier sistema; los ejemplos usan snapshots de `/etc` (no requiere lab)"
+  - label: "Ver escenarios relacionados"
+    links:
+      - id: "scenarios/system/15-config-drift"
+        label: "system/15-config-drift"
+      - id: "scenarios/security/02-suid-audit-and-file-permissions"
+        label: "security/02-suid-audit-and-file-permissions"
+      - id: "scenarios/infrastructure/10-backup-restore-drill"
+        label: "infrastructure/10-backup-restore-drill"
 ---
 # 🔀 diff — Guía completa de comparación de archivos
-
-**Nivel:** 🟡 Intermedio
-**Archivos de práctica:** Funciona en cualquier sistema; los ejemplos usan snapshots de `/etc` (no requiere lab)
-**Ver escenarios relacionados:** [`system/15-config-drift`](/learning-sys-admin-guides-web/scenarios/system/15-config-drift/), [`security/02-suid-audit-and-file-permissions`](/learning-sys-admin-guides-web/scenarios/security/02-suid-audit-and-file-permissions/), [`infrastructure/10-backup-restore-drill`](/learning-sys-admin-guides-web/scenarios/infrastructure/10-backup-restore-drill/)
 
 ---
 
@@ -15,7 +22,9 @@ section: "guides"
 
 `diff -u /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak`
 
-> ⚠️ `diff` devuelve **exit code 1 cuando hay diferencias**. En scripts con `set -e` eso aborta la ejecución: tratalo explícitamente.
+:::callout{state=warning label="Exit code"}
+`diff` devuelve **exit code 1 cuando hay diferencias**. En scripts con `set -e` eso aborta la ejecución: tratalo explícitamente.
+:::
 
 ---
 
@@ -172,7 +181,9 @@ Más verboso que `-u`, pero es POSIX y sirve en sistemas muy antiguos.
 | `Only in d2: f2` | El archivo existe en un árbol y no en el otro |
 | `Binary files a and b differ` | Son binarios: usar `cmp` o checksums |
 
-> ⚠️ Las cabeceras `---`/`+++` incluyen la fecha del archivo. Dos ejecuciones del mismo `diff -u` producen parches con cabeceras distintas. `patch` las ignora, pero si comparas parches entre sí, usa `--label` (GNU/BSD) o filtra las dos primeras líneas.
+:::callout{state=warning label="Cabeceras con fecha"}
+Las cabeceras `---`/`+++` incluyen la fecha del archivo. Dos ejecuciones del mismo `diff -u` producen parches con cabeceras distintas. `patch` las ignora, pero si comparas parches entre sí, usa `--label` (GNU/BSD) o filtra las dos primeras líneas.
+:::
 
 ### 🧪 Salidas simuladas
 
@@ -217,7 +228,9 @@ $
 | `-y` | Comparación lado a lado | Leer cambios en pantalla ancha |
 | `--label` | Reemplaza el nombre/fecha en la cabecera | Parches reproducibles |
 
-> ⚠️ **Compatibilidad**: en Alpine/BusyBox funcionan `-u`, `-c`, `-q`, `-r`, `-N`, `-i`, `-w`, `-b`, `-B`, `-a`, `-s`. **No** están disponibles `-y`, `-x`, `--label` ni `--color`. Si escribes un script para Alpine, evita esas opciones.
+:::callout{state=warning label="Compatibilidad"}
+En Alpine/BusyBox funcionan `-u`, `-c`, `-q`, `-r`, `-N`, `-i`, `-w`, `-b`, `-B`, `-a`, `-s`. **No** están disponibles `-y`, `-x`, `--label` ni `--color`. Si escribes un script para Alpine, evita esas opciones.
+:::
 
 ---
 
@@ -457,7 +470,9 @@ ssh web02 'rpm -qa | sort' > /tmp/web02.txt
 diff -u /tmp/web01.txt /tmp/web02.txt
 ```
 
-> ⚠️ `--label` es GNU/BSD: en Alpine/BusyBox no existe. Para parches portables, quita las dos primeras líneas del parche con `sed '1,2d'` o aceptá cabeceras con fecha.
+:::callout{state=warning label="Portabilidad"}
+`--label` es GNU/BSD: en Alpine/BusyBox no existe. Para parches portables, quita las dos primeras líneas del parche con `sed '1,2d'` o aceptá cabeceras con fecha.
+:::
 
 ---
 

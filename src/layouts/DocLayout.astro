@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import BottomNav from '../components/BottomNav.astro';
 import CardsToolbar from '../components/CardsToolbar.astro';
+import DocMeta, { type MetaRow } from '../components/DocMeta.astro';
 import PageSearch from '../components/PageSearch.astro';
 import SidebarNav from '../components/SidebarNav.astro';
 import Toc, { type Heading } from '../components/Toc.astro';
@@ -12,6 +13,7 @@ interface Props {
   description?: string;
   section: string;
   level?: string;
+  meta?: MetaRow[];
   currentId: string;
   headings?: Heading[];
   prev?: NavEntry;
@@ -24,6 +26,7 @@ const {
   description,
   section,
   level,
+  meta = [],
   currentId,
   headings = [],
   prev,
@@ -62,6 +65,8 @@ const nav = await getNav();
       <PageSearch />
 
       {hasCards && <CardsToolbar />}
+
+      <DocMeta rows={meta} />
 
       <article class="prose">
         <slot />

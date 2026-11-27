@@ -24,10 +24,10 @@ Key files:
 
 - `astro.config.mjs`: Sätteri markdown processor + mdast/hast plugins from `src/plugins/`.
 - `src/lib/nav.ts`: nav derived from the `docs` content collection; entries sorted by `id` (`localeCompare`); `route()` builds public paths from `src/lib/base.ts`.
-- `src/scripts/enhance.ts` (287 lines): client monolith (theme, code copy, reading progress, mermaid, expand/collapse, drawer, TOC menu, TOC active).
+- `src/scripts/enhance.ts` (314 lines): client monolith (theme, code copy, reading progress, mermaid, expand/collapse, drawer, TOC menu, TOC active).
 - `src/scripts/search.ts` (481 lines): global search (dialog) + local search (dropdown) + index fetch/parse/render.
 - `src/lib/fuzzy.ts` (170 lines): contiguous-then-subsequence matcher with highlight ranges.
-- `src/styles/global.css` (819 lines): design tokens, layout, components, search and TOC styles.
+- `src/styles/global.css` (824 lines): design tokens, layout, components, search and TOC styles.
 - `scripts/`: `build-search-index.mjs`, `lint-icons.mjs`, `lint-language.mjs`, `prepare-content.mjs` (syncs markdown from the upstream repo and rewrites relative links to absolute site paths).
 - `.github/workflows/ci.yml`: `pnpm install --frozen-lockfile`, `lint:icons`, `lint:language`, `check`, `build`.
 - `docs/content-style.md`, `docs/icon-system.md`, `docs/guide-template.md`, `README.md`.
@@ -49,9 +49,11 @@ Conventions that must hold (see `docs/content-style.md`, `docs/icon-system.md`):
 
 ## Phases
 
-### Phase 1: Verification harness (unit + e2e in CI)
+### Phase 1: Verification harness (unit + e2e in CI) — COMPLETE (PR #17)
 
 Objective: one command runs the whole test suite, and CI runs it on every PR. This is the feedback loop the rest of the plan depends on.
+
+> Status: done. `tests/unit/fuzzy.test.ts`, `tests/e2e/base.spec.ts`, `vitest.config.ts`, `playwright.config.ts` and the `test` CI job are on `main`. PR #18 later added the code action bar and its overlap e2e, which Phase 2 must preserve.
 
 Tasks:
 
@@ -93,20 +95,20 @@ Tasks:
 
 1. Split `src/scripts/enhance.ts` into `src/scripts/modules/` files, each exporting `initX(): void`: `theme.ts`, `code-copy.ts`, `reading-progress.ts`, `mermaid.ts`, `drawer.ts`, `cards-toolbar.ts`, `toc-menu.ts`, `toc-active.ts`. `enhance.ts` becomes a thin entry that calls them in order.
 2. Split `src/scripts/search.ts` into `src/scripts/search/index.ts` (entry), `global.ts` (dialog), `local.ts` (page dropdown).
-3. Extract the search index shape into `src/lib/search-index.ts` (`SearchDocument`, `SearchBlock`, `parseSearchIndex`) and use it from both the client and `scripts/build-search-index.mjs`, so the generator and the consumer cannot drift.
+3. Extract the search index shape into `src/lib/search-index.mjs` (`SearchDocument`, `SearchBlock`, `parseSearchIndex` for the client, `normalizeDocument` for the generator) and use it from both the client and `scripts/build-search-index.mjs`, so the generator and the consumer cannot drift. Use `.mjs` (not `.ts`) so the Node generator imports it without a loader, consistent with `src/lib/site.mjs`.
 4. Add `src/lib/dom.ts` with typed helpers (`query`, `queryAll`, `on`) to remove repeated `querySelector` casts and null checks.
-5. `src/components/DocMeta.astro` with props `{ level?: string; prerequisites?: string; related?: Array<{ id: string; label?: string }> }`, rendering the level badge, requirements and related links (paths resolved with `route()`, so no hardcoded base in markdown).
-6. Move the hand-written header block out of `content/guides/diff.md`, `content/guides/dahua/dahua-discovery.md` and `content/scenarios/system/15-config-drift.md` into frontmatter (`level`, `prerequisites`, `related`), and update `docs/guide-template.md` to the frontmatter-first header.
+5. `src/components/DocMeta.astro` with props `{ level?: string; meta?: MetaRow[] }`, where `MetaRow = { label: string; value?: string; links?: Array<{ id: string; label?: string }> }`. Generic rows cover the heterogeneous headers in use today (Dominio, Herramientas, Archivos, Archivos de práctica, related links); paths resolve with `route()`, so no hardcoded base in markdown.
+6. Move the hand-written header block out of `content/guides/diff.md`, `content/guides/dahua/dahua-discovery.md` and `content/scenarios/system/15-config-drift.md` into frontmatter (`level` plus a `meta` array of rows), add `meta` to the collection schema in `src/content.config.ts`, and update `docs/guide-template.md` to the frontmatter-first header.
 7. `src/plugins/mdast-callout.mjs`: `:::callout{state=warning|tip|danger}` directive replacing the ad-hoc blockquote conventions, reusing the existing color tokens; register it in `astro.config.mjs` and reuse it in the guides that already carry warning blockquotes.
 8. Keep every module under roughly 150 lines and give each a header comment stating its responsibility.
 
 Public contracts:
 
 - Module paths and exported init functions: `initTheme`, `initCodeCopy`, `initReadingProgress`, `initMermaid`, `initDrawer`, `initCardsToolbar`, `initTocMenu`, `initTocActive`, `initGlobalSearch`, `initLocalSearch`.
-- Shared types: `SearchDocument`, `SearchBlock`, `parseSearchIndex`.
+- Shared types: `SearchDocument`, `SearchBlock`, `parseSearchIndex`, `normalizeDocument`.
 - Helper signatures in `src/lib/dom.ts`.
-- `DocMeta` props: `level`, `prerequisites`, `related[]`.
-- Frontmatter keys: `level`, `prerequisites`, `related` (array of content ids).
+- `DocMeta` props: `level`, `meta[]` (with `MetaRow = { label, value?, links?[] }`).
+- Frontmatter keys: `level` (string) plus `meta` (array of `{ label, value?, links? }` rows).
 - Directive syntax: `:::callout{state=...}` with a label, plus its CSS classes.
 
 Exit criteria: identical rendered behavior (Phase 1 e2e green), no module over 150 lines, and the header block gone from all guides.
@@ -152,4 +154,4 @@ Tasks to close the phase, in order:
 
 ## Next step
 
-Approve the phase breakdown (or adjust the granularity), then implement Phase 1 with `/plan-phases-implement`.
+Phases 1–2 scope is approved. Phase 1 is complete (PR #17); implement Phase 2 (clean code and DRY components) with `/plan-phases-implement`, keeping the Phase 1 e2e suite green. Phase 3 follows after Phase 2 is reviewed.
