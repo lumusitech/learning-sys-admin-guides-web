@@ -8,61 +8,20 @@
  *  - el icono pertenezca al set canónico definido en docs/icon-system.md;
  *  - haya un espacio entre el icono y el texto.
  *
- * Fuente única de verdad: el bloque entre `<!-- icon-set:start/end -->`.
+ * Fuente única de verdad: el bloque `<!-- icon-set:start/end -->`; el set se
+ * comparte con `scripts/new-guide.mjs` vía `scripts/lib/icon-set.mjs`.
  */
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { ICON_DOC, iconKey, leadingEmoji, loadIconSet } from './lib/icon-set.mjs';
 
-const DOC = 'docs/icon-system.md';
 const CONTENT = 'content';
-const EMOJI = /^\s*(\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F)?)*)/u;
 
 const problems = [];
 
 function fail(message) {
   problems.push(message);
-}
-
-/** Devuelve el emoji inicial de un texto, o null. */
-function leadingEmoji(text) {
-  const match = text.match(EMOJI);
-  return match ? match[1] : null;
-}
-
-/** Clave normalizada para comparar (sin selectores de variación). */
-function key(emoji) {
-  return emoji.replace(/\uFE0F/g, '');
-}
-
-function loadIconSet() {
-  const doc = readFileSync(DOC, 'utf8');
-  const start = doc.indexOf('<!-- icon-set:start -->');
-  const end = doc.indexOf('<!-- icon-set:end -->');
-  if (start === -1 || end === -1) {
-    console.error(`${DOC}: faltan los marcadores <!-- icon-set:start --> / <!-- icon-set:end -->`);
-    process.exit(1);
-  }
-
-  const set = new Map();
-  for (const line of doc.slice(start, end).split('\n')) {
-    const row = line.match(/^\|\s*(\S+)\s*\|\s*(.+?)\s*\|/u);
-    if (!row) continue;
-    const emoji = leadingEmoji(row[1]);
-    if (!emoji) continue;
-    const k = key(emoji);
-    if (set.has(k)) {
-      console.error(`${DOC}: icono duplicado en el set: ${emoji}`);
-      process.exit(1);
-    }
-    set.set(k, row[2]);
-  }
-
-  if (set.size === 0) {
-    console.error(`${DOC}: el set canónico está vacío`);
-    process.exit(1);
-  }
-  return set;
 }
 
 function* markdownFiles(dir) {
@@ -81,7 +40,7 @@ function checkHeading(file, lineNumber, text, set) {
     fail(`${file}:${lineNumber} sin icono → ${label}`);
     return;
   }
-  if (!set.has(key(emoji))) {
+  if (!set.has(iconKey(emoji))) {
     fail(`${file}:${lineNumber} icono fuera del set (${emoji}) → ${label}`);
     return;
   }
@@ -96,7 +55,7 @@ function checkFrontmatterTitle(file, lines, set) {
     if (!match) continue;
     const emoji = leadingEmoji(match[1]);
     if (!emoji) fail(`${file}:${i + 1} el título de página no tiene icono`);
-    else if (!set.has(key(emoji))) fail(`${file}:${i + 1} icono de página fuera del set (${emoji})`);
+    else if (!set.has(iconKey(emoji))) fail(`${file}:${i + 1} icono de página fuera del set (${emoji})`);
     return;
   }
 }
@@ -123,7 +82,7 @@ for (const file of markdownFiles(CONTENT)) {
 if (problems.length > 0) {
   console.error(`\nIconos: ${problems.length} problema(s)\n`);
   for (const problem of problems) console.error(`  ✗ ${problem}`);
-  console.error('\nSet canónico: docs/icon-system.md');
+  console.error(`\nSet canónico: ${ICON_DOC}`);
   process.exit(1);
 }
 
