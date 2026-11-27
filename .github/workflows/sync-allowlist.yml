@@ -1,0 +1,44 @@
+name: Sync allowlist
+
+# Detecta drift entre el allowlist commiteado y el repo upstream.
+# No abre PRs de contenido: la importación se revisa aparte porque requiere
+# migración de iconos, idioma y cabeceras.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # lunes 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Clonar upstream
+        run: git clone --depth 1 https://github.com/lumusitech/learning-sys-admin-guides.git /tmp/upstream
+
+      - name: Regenerar allowlist
+        run: pnpm sync:allowlist /tmp/upstream
+
+      - name: Fallar si el allowlist quedó desactualizado
+        run: |
+          if ! git diff --quiet -- scripts/pending-sync.json; then
+            echo "::error::El allowlist está desactualizado respecto al upstream. Corre 'pnpm sync:allowlist <upstream>' y commitea el cambio."
+            git --no-pager diff --stat -- scripts/pending-sync.json
+            exit 1
+          fi
+          echo "Allowlist al día."

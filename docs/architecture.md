@@ -46,6 +46,7 @@ scripts/                 Lints y utilidades de contenido (Node, .mjs)
   lint-content.mjs       Frontmatter, links internos y anclas
   new-guide.mjs          Scaffolder de documentos
   sync-allowlist.mjs     Regenera pending-sync.json desde el repo upstream
+  sync-content.mjs       Clona/usa upstream y sincroniza todo en un paso
   build-search-index.mjs Genera public/search-index.json
   prepare-content.mjs    Copia markdown upstream y refresca el allowlist
 ```
@@ -91,16 +92,26 @@ Después:
 
 ## Sync upstream
 
-El contenido se copia del repo origen con `pnpm content <sourceDir>`, que
-reescribe los links relativos a absolutos y, al terminar, **refresca
-`scripts/pending-sync.json`**. El allowlist también se puede regenerar solo:
+Un solo comando clona el upstream (o usa un checkout local), copia solo las
+secciones publicables, reescribe los links a la base del sitio y refresca el
+allowlist:
 
 ```bash
-pnpm sync:allowlist <sourceDir>
+pnpm sync                     # clona el repo upstream en un temporal
+pnpm sync --source=../ruta    # usa un checkout local
 ```
 
-Ese archivo es un snapshot de los ids que existen upstream; se commitea para que
-CI (sin acceso al repo origen) pueda distinguir un link pendiente de un typo.
+`pnpm content <sourceDir>` sigue disponible para una copia manual. El allowlist
+también se regenera solo con `pnpm sync:allowlist <sourceDir>`.
+
+`scripts/pending-sync.json` es un snapshot determinista de los ids que existen
+upstream (sin README ni archivos de raíz). Se commitea para que CI —sin acceso
+al repo origen— distinga un link pendiente de un typo. El workflow
+`Sync allowlist` corre semanalmente y falla si el snapshot quedó desactualizado.
+
+> Importar todo el contenido upstream todavía requiere una migración (iconos en
+> títulos, español neutro y cabeceras a `meta`). `pnpm sync` copia, pero el
+> contenido se revisa y adapta antes de commitear.
 
 ## Lints y verificación
 
@@ -132,3 +143,6 @@ Las anclas se validan contra `dist/`, así que `lint:content` debe correr tras
 - **verify:** `lint:icons`, `lint:language`, `check`, `build` y `lint:content`.
 - **test:** instala Chromium y corre `pnpm test:all` (unitarios + e2e, que
   incluyen axe y presupuestos).
+
+`.github/workflows/sync-allowlist.yml` corre semanalmente: clona el upstream,
+regenera el allowlist y falla si quedó desactualizado (drift).

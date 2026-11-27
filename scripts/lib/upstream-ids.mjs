@@ -27,6 +27,7 @@ export function collectUpstreamIds(root) {
         if (SKIP.has(entry.name)) continue;
         walk(path);
       } else if (entry.name.endsWith('.md')) {
+        if (entry.name.toLowerCase() === 'readme.md') continue;
         const id = relative(root, path)
           .split(sep)
           .join('/')
@@ -40,13 +41,8 @@ export function collectUpstreamIds(root) {
   return ids.sort();
 }
 
-/** Escribe el allowlist ordenado junto con su procedencia. */
-export function writePendingSync(ids, source, file = PENDING_FILE) {
-  const data = {
-    generatedAt: new Date().toISOString(),
-    source,
-    ids,
-  };
-  writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);
+/** Escribe el allowlist ordenado. Determinista (solo ids) para detectar drift. */
+export function writePendingSync(ids, file = PENDING_FILE) {
+  writeFileSync(file, `${JSON.stringify({ ids }, null, 2)}\n`);
   return file;
 }

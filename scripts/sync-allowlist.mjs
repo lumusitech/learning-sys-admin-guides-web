@@ -24,5 +24,5 @@ if (!existsSync(source) || !statSync(source).isDirectory()) {
 }
 
 const ids = collectUpstreamIds(source);
-const file = writePendingSync(ids, source);
-console.log(`Allowlist: ${ids.length} ids upstream → ${file}`);
+const file = writePendingSync(ids);
+console.log(`Allowlist: ${ids.length} ids upstream (${source}) → ${file}`);

@@ -14,11 +14,12 @@
 
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import path from 'node:path';
+import { SITE_BASE } from '../src/lib/site.mjs';
 import { collectUpstreamIds, writePendingSync } from './lib/upstream-ids.mjs';
 
 const args = process.argv.slice(2);
 const baseArg = args.find((arg) => arg.startsWith('--base='));
-const BASE = baseArg ? baseArg.slice('--base='.length) : '/';
+const BASE = baseArg ? baseArg.slice('--base='.length) : SITE_BASE;
 const positional = args.filter((arg) => !arg.startsWith('--'));
 
 const sourceDir = positional[0];
@@ -109,8 +110,17 @@ async function main() {
 
   let written = 0;
   const skipped = [];
+  const ignored = [];
 
   for (const relative of files) {
+    // Solo secciones del sitio; fuera quedan README de sección, AGENTS.md,
+    // .opencode/ y cualquier markdown que no sea contenido publicable.
+    const section = sectionOf(relative);
+    if (!section || relative.endsWith('README.md')) {
+      ignored.push(relative);
+      continue;
+    }
+
     const source = path.join(sourceDir, relative);
     let markdown;
     try {
@@ -126,7 +136,6 @@ async function main() {
       continue;
     }
 
-    const section = sectionOf(relative);
     const level = extractLevel(markdown);
     const withLinks = rewriteLinks(markdown, relative, BASE);
 
@@ -141,6 +150,7 @@ async function main() {
   }
 
   console.log(`Copiados: ${written}`);
+  if (ignored.length > 0) console.log(`Ignorados (fuera de sección o README): ${ignored.length}`);
   if (skipped.length > 0) {
     console.log(`Omitidos (sin H1 o ilegibles): ${skipped.length}`);
     for (const file of skipped) console.log(`  - ${file}`);
@@ -149,7 +159,7 @@ async function main() {
   // Refresca el allowlist de pendientes para que `lint:content` distinga
   // "falta sincronizar" de un link roto.
   const ids = collectUpstreamIds(sourceDir);
-  const allowlist = writePendingSync(ids, sourceDir);
+  const allowlist = writePendingSync(ids);
   console.log(`Allowlist actualizado: ${ids.length} ids → ${allowlist}`);
 }
 
