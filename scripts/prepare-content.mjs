@@ -14,6 +14,7 @@
 
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import path from 'node:path';
+import { collectUpstreamIds, writePendingSync } from './lib/upstream-ids.mjs';
 
 const args = process.argv.slice(2);
 const baseArg = args.find((arg) => arg.startsWith('--base='));
@@ -144,6 +145,12 @@ async function main() {
     console.log(`Omitidos (sin H1 o ilegibles): ${skipped.length}`);
     for (const file of skipped) console.log(`  - ${file}`);
   }
+
+  // Refresca el allowlist de pendientes para que `lint:content` distinga
+  // "falta sincronizar" de un link roto.
+  const ids = collectUpstreamIds(sourceDir);
+  const allowlist = writePendingSync(ids, sourceDir);
+  console.log(`Allowlist actualizado: ${ids.length} ids → ${allowlist}`);
 }
 
 main().catch((error) => {

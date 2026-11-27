@@ -22,6 +22,7 @@ import { LEVELS, SECTIONS } from './lib/content-constants.mjs';
 
 const CONTENT = 'content';
 const DIST = 'dist';
+const PENDING_FILE = 'scripts/pending-sync.json';
 const BASE = SITE_BASE.endsWith('/') ? SITE_BASE : `${SITE_BASE}/`;
 const LEVELED_SECTIONS = new Set(['guides', 'scenarios']);
 
@@ -103,6 +104,30 @@ for (const file of [...walk(CONTENT)].sort()) {
 const existingIds = new Set(docs.map((doc) => doc.id));
 const hasDist = existsSync(DIST);
 
+/* Allowlist de ids que existen upstream (snapshot generado por
+   `pnpm sync:allowlist`). Permite separar "pendiente de sync" de un typo. */
+const pendingIds = new Set();
+if (existsSync(PENDING_FILE)) {
+  try {
+    const data = JSON.parse(readFileSync(PENDING_FILE, 'utf8'));
+    if (Array.isArray(data.ids)) for (const id of data.ids) pendingIds.add(id);
+  } catch {
+    warn(`${PENDING_FILE}: no se pudo leer el allowlist.`);
+  }
+}
+const hasAllowlist = pendingIds.size > 0;
+
+/** Reporta un id ausente según el allowlist: aviso o error. */
+function reportMissing(where, target) {
+  if (!hasAllowlist) {
+    warn(`${where}: id ausente (${target}); allowlist de sync no disponible.`);
+  } else if (pendingIds.has(target)) {
+    warn(`${where}: pendiente de sync: ${target}`);
+  } else {
+    fail(`${where}: link a id inexistente (typo o documento eliminado): ${target}`);
+  }
+}
+
 /* ---------------------------------------------------------------- */
 /* 1. Frontmatter                                                    */
 /* ---------------------------------------------------------------- */
@@ -136,7 +161,7 @@ for (const doc of docs) {
     if (!SECTIONS.includes(metaSection)) {
       fail(`${doc.file}: meta link con sección desconocida (${target}).`);
     } else if (!existingIds.has(target)) {
-      warn(`${doc.file}: pendiente de sync (meta): ${target}`);
+      reportMissing(`${doc.file} (meta)`, target);
     }
   }
 }
@@ -223,7 +248,7 @@ function checkLink(doc, target, line) {
   }
 
   if (!existingIds.has(id)) {
-    warn(`${doc.file}:${line} pendiente de sync: ${id}`);
+    reportMissing(`${doc.file}:${line}`, id);
     return;
   }
 
@@ -244,6 +269,10 @@ if (!hasDist) {
   console.log('Aviso: no hay dist/; se omiten las anclas (corre pnpm build antes).');
 }
 
+if (!hasAllowlist) {
+  console.log(`Aviso: sin ${PENDING_FILE}; los ids ausentes se tratan como aviso.`);
+}
+
 if (warnings.length > 0) {
   console.log(`\nContenido: ${warnings.length} aviso(s) de sync pendiente:`);
   for (const warning of warnings) console.log(`  ! ${warning}`);
@@ -255,4 +284,6 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`\nContenido: OK (${docs.length} documentos, ${warnings.length} aviso(s)).`);
+console.log(
+  `\nContenido: OK (${docs.length} documentos, ${pendingIds.size} ids upstream, ${warnings.length} aviso(s)).`,
+);

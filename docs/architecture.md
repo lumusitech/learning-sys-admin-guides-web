@@ -39,12 +39,15 @@ src/
 scripts/                 Lints y utilidades de contenido (Node, .mjs)
   lib/icon-set.mjs       Set canónico de iconos (fuente: docs/icon-system.md)
   lib/content-constants.mjs  Allowlists de secciones y niveles
+  lib/upstream-ids.mjs   Listado de ids upstream y snapshot del allowlist
+  pending-sync.json      Snapshot de ids que existen upstream (commiteado)
   lint-icons.mjs         Iconos en títulos y frontmatter
   lint-language.mjs      Español neutro (sin voseo)
   lint-content.mjs       Frontmatter, links internos y anclas
   new-guide.mjs          Scaffolder de documentos
+  sync-allowlist.mjs     Regenera pending-sync.json desde el repo upstream
   build-search-index.mjs Genera public/search-index.json
-  prepare-content.mjs    Copia y normaliza markdown desde el repo upstream
+  prepare-content.mjs    Copia markdown upstream y refresca el allowlist
 ```
 
 ## Flujo de datos
@@ -86,13 +89,26 @@ Después:
 2. Usa `:::callout{state=warning|tip|danger label="..."}` para advertencias.
 3. Verifica en local: `pnpm verify`.
 
+## Sync upstream
+
+El contenido se copia del repo origen con `pnpm content <sourceDir>`, que
+reescribe los links relativos a absolutos y, al terminar, **refresca
+`scripts/pending-sync.json`**. El allowlist también se puede regenerar solo:
+
+```bash
+pnpm sync:allowlist <sourceDir>
+```
+
+Ese archivo es un snapshot de los ids que existen upstream; se commitea para que
+CI (sin acceso al repo origen) pueda distinguir un link pendiente de un typo.
+
 ## Lints y verificación
 
 | Comando | Qué valida |
 |---|---|
 | `pnpm lint:icons` | Todo título y `title:` empieza por un icono del set |
 | `pnpm lint:language` | Español neutro (sin voseo ni regionalismos) |
-| `pnpm lint:content` | Frontmatter, links internos y anclas |
+| `pnpm lint:content` | Frontmatter, links internos, anclas y allowlist de sync |
 | `pnpm check` | Tipos (Astro + TS strict) |
 | `pnpm test` | Unitarios (Vitest) |
 | `pnpm test:e2e` | E2E, accesibilidad (axe) y presupuestos de CSS/JS |
@@ -101,8 +117,9 @@ Después:
 `lint:content` distingue **error** de **aviso**:
 
 - **Error:** frontmatter incompleto o fuera de allowlist, link con base
-  incorrecta, sin barra final, sección desconocida, o ancla sin destino.
-- **Aviso:** link bien formado a un `id` que aún no está en `content/`; se
+  incorrecta, sin barra final, sección desconocida, ancla sin destino, o link a
+  un id que no está en `content/` **ni** en `scripts/pending-sync.json`.
+- **Aviso:** link a un id que está en el allowlist pero todavía no se copió; se
   asume pendiente de sync upstream y no rompe CI.
 
 Las anclas se validan contra `dist/`, así que `lint:content` debe correr tras

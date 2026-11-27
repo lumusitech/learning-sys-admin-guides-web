@@ -120,7 +120,7 @@ Tasks to close the phase, in order:
 
 ### Phase 3: Replicability, integrity and final hardening — IMPLEMENTED (this PR)
 
-> Status: `order` eliminado del esquema y del template (el orden sigue el `id`). `new:guide` y `lint:content` están implementados; los links bien formados a ids ausentes son avisos (pendientes de sync), los malformados son error. `pnpm verify` encadena todo y CI corre `lint:content` tras el build. La accesibilidad (axe) y los presupuestos CSS/JS viven en `tests/e2e/quality.spec.ts`.
+> Status: `order` eliminado del esquema y del template (el orden sigue el `id`). `new:guide` y `lint:content` están implementados; los links a ids que no están en `content/` ni en `scripts/pending-sync.json` son error (typo), y los que sí están en el allowlist son aviso (pendiente de sync). El allowlist se genera del listado upstream con `pnpm sync:allowlist <sourceDir>` y `prepare-content` lo refresca. `pnpm verify` encadena todo y CI corre `lint:content` tras el build. La accesibilidad (axe) y los presupuestos CSS/JS viven en `tests/e2e/quality.spec.ts`.
 
 Objective: creating a new guide is one command, broken content fails CI, and the base is documented and accessible enough to freeze before content scales.
 
@@ -156,4 +156,4 @@ Tasks to close the phase, in order:
 
 ## Next step
 
-Fases 1–3 implementadas y Fase 2 mergeada (#19). Falta revisar y mergear esta PR de Fase 3; después, correr `pnpm verify` sobre `main`. Con eso la base queda lista para cargar contenido en bloque. El trabajo restante es el sync upstream (`scripts/prepare-content.mjs`) y decidir si se commitea un listado de ids pendientes.
+Fases 1–3 implementadas y Fase 2 mergeada (#19). Falta revisar y mergear esta PR de Fase 3; después, correr `pnpm verify` sobre `main`. Con eso la base queda lista para cargar contenido en bloque. El trabajo restante es automatizar el sync upstream en CI (hoy `pnpm content <sourceDir>` es manual) y cargar los documentos.
