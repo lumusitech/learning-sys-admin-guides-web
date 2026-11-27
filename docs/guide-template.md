@@ -26,10 +26,11 @@ section: "guides" # guides | scenarios | concepts | reference
 meta:
   - label: "Requisitos"
     value: "acceso a un host Linux con `herramienta` instalada"
-  - label: "Ver escenarios relacionados"
-    links:
-      - id: "scenarios/system/01-..."
-        label: "system/01-..."
+  # Cuando tengas enlaces internos, agrega una fila así:
+  # - label: "Ver escenarios relacionados"
+  #   links:
+  #     - id: "scenarios/system/01-..."
+  #       label: "system/01-..."
 ---
 
 # ⚡ nombre — Qué resuelve en una frase

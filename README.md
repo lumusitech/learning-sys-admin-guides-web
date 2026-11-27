@@ -22,7 +22,15 @@ pnpm build       # genera dist/
 pnpm check       # tipos
 pnpm lint:icons  # coherencia de iconos en los títulos
 pnpm lint:language  # español neutro (sin voseo ni regionalismos)
+pnpm lint:content   # frontmatter, links internos y anclas (tras build)
+pnpm test           # unitarios
+pnpm test:e2e       # e2e + accesibilidad + presupuestos
+pnpm verify         # toda la cadena
+pnpm new:guide <section> <slug>  # scaffold de un documento
 ```
+
+Mapa de módulos, flujo de datos y ruta del contribuidor en
+[`docs/architecture.md`](docs/architecture.md).
 
 ## Convenciones de contenido
 
@@ -31,13 +39,15 @@ pnpm lint:language  # español neutro (sin voseo ni regionalismos)
   (corre en CI).
 - **Iconos:** set canónico y reglas en [`docs/icon-system.md`](docs/icon-system.md).
   Lo valida `pnpm lint:icons` (corre en CI): todo título necesita un icono del set.
-- **Guides nuevos:** partir de [`docs/guide-template.md`](docs/guide-template.md).
+- **Guides nuevos:** usar `pnpm new:guide <section> <slug>` (scaffold desde
+  [`docs/guide-template.md`](docs/guide-template.md), valida el icono y respeta `meta`).
 - **Cabeceras:** los metadatos del encabezado (requisitos, herramientas, archivos,
   enlaces) van en `meta:` del frontmatter y los renderiza `DocMeta`; no se escriben
   a mano en el cuerpo.
 - **Advertencias:** usar `:::callout{state=warning|tip|danger label="..."}` en vez de
   blockquotes ad-hoc.
-- CI en `.github/workflows/ci.yml`: `lint:icons` + `lint:language` + `check` + `build` en cada PR.
+- CI en `.github/workflows/ci.yml`: `lint:icons` + `lint:language` + `check` + `build`
+  + `lint:content` + tests (unitarios, e2e, a11y y presupuestos) en cada PR.
 
 ## Flujo de trabajo
 

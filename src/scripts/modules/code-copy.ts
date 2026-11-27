@@ -1,12 +1,17 @@
 /**
  * Acciones de los bloques de código.
  *
- * Envuelve cada `pre` en `.code-wrap` con una barra de acciones encima. Hoy la
- * barra solo tiene "copiar"; agregar otra acción es sumar un botón a `actions`
- * (p. ej. ajuste de líneas o descarga).
+ * - Envuelve cada `pre` en `.code-wrap` con una barra de acciones encima.
+ * - Agrega un botón de copiar a los Quick command inline: párrafos compuestos
+ *   únicamente por un `<code>` bajo un encabezado "Quick command".
+ *
+ * Agregar otra acción a un bloque es sumar un botón a `actions`.
  */
 
 import { on, queryAll } from '../../lib/dom';
+
+const BLOCK_LABEL = 'Copiar el bloque de código';
+const COMMAND_LABEL = 'Copiar el comando';
 
 function stripPrompts(text: string): string {
   return text
@@ -39,14 +44,35 @@ const ICON_COPY =
 const ICON_CHECK =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
 
-function actionButton(label: string, icon: string): HTMLButtonElement {
+function actionButton(
+  label: string,
+  icon: string,
+  className = 'code-action',
+): HTMLButtonElement {
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'code-action';
+  button.className = className;
   button.setAttribute('aria-label', label);
   button.title = label;
   button.innerHTML = icon;
   return button;
+}
+
+function wireCopy(button: HTMLButtonElement, label: string, getText: () => string): void {
+  button.dataset.action = 'copy';
+  on(button, 'click', () => {
+    void copyText(getText()).then((ok) => {
+      if (!ok) return;
+      button.dataset.copied = 'true';
+      button.innerHTML = ICON_CHECK;
+      button.setAttribute('aria-label', 'Copiado');
+      window.setTimeout(() => {
+        button.dataset.copied = 'false';
+        button.innerHTML = ICON_COPY;
+        button.setAttribute('aria-label', label);
+      }, 1600);
+    });
+  });
 }
 
 export function initCodeCopy(): void {
@@ -62,27 +88,29 @@ export function initCodeCopy(): void {
     const actions = document.createElement('div');
     actions.className = 'code-actions';
 
-    const copyButton = actionButton('Copiar el bloque de código', ICON_COPY);
-    copyButton.dataset.action = 'copy';
-    on(copyButton, 'click', () => {
-      const code = stripPrompts(pre.textContent ?? '');
-      void copyText(code).then((ok) => {
-        if (!ok) return;
-        copyButton.dataset.copied = 'true';
-        copyButton.innerHTML = ICON_CHECK;
-        copyButton.setAttribute('aria-label', 'Copiado');
-        window.setTimeout(() => {
-          copyButton.dataset.copied = 'false';
-          copyButton.innerHTML = ICON_COPY;
-          copyButton.setAttribute('aria-label', 'Copiar el bloque de código');
-        }, 1600);
-      });
-    });
+    const copyButton = actionButton(BLOCK_LABEL, ICON_COPY);
+    wireCopy(copyButton, BLOCK_LABEL, () => stripPrompts(pre.textContent ?? ''));
     actions.appendChild(copyButton);
 
     toolbar.appendChild(actions);
     pre.parentNode?.insertBefore(wrap, pre);
     wrap.appendChild(toolbar);
     wrap.appendChild(pre);
+  }
+
+  // Quick command inline: el párrafo es exactamente un <code>.
+  for (const heading of queryAll<HTMLElement>('.prose h2, .prose h3')) {
+    if (!/quick command/i.test(heading.textContent ?? '')) continue;
+
+    const paragraph = heading.nextElementSibling;
+    if (!(paragraph instanceof HTMLParagraphElement)) continue;
+
+    const code = paragraph.querySelector('code');
+    if (!code) continue;
+    if ((paragraph.textContent ?? '').trim() !== (code.textContent ?? '').trim()) continue;
+
+    const copyButton = actionButton(COMMAND_LABEL, ICON_COPY, 'quick-copy');
+    wireCopy(copyButton, COMMAND_LABEL, () => code.textContent ?? '');
+    paragraph.append(copyButton);
   }
 }

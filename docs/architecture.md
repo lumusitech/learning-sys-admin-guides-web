@@ -1,0 +1,117 @@
+# Arquitectura
+
+Mapa del sitio y de su cadena de contenido, para que una persona nueva pueda
+añadir documentos sin reconstruir el contexto.
+
+## Stack
+
+- **Astro 7** con procesador Markdown nativo (Sätteri) y plugins mdast/hast.
+- **Tailwind 4** vía `@tailwindcss/vite`, con tokens semánticos en `@theme`
+  (`src/styles/global.css`). No hay `tailwind.config.js`.
+- **TypeScript strict** (`tsconfig.json`) y contenido en la colección `docs`.
+- **pnpm**; salida estática con base `/learning-sys-admin-guides-web`.
+
+## Mapa de módulos
+
+```
+content/                 Markdown fuente (colección `docs`)
+  guides/ scenarios/ concepts/ reference/ labs/
+
+src/
+  content.config.ts      Esquema del frontmatter (title, section, level, meta…)
+  lib/
+    base.ts              Base URL normalizada (siempre con barra final)
+    nav.ts               Navegación desde la colección; `route()` arma rutas
+    fuzzy.ts             Matcher difuso (contiguous > subsequence)
+    search-index.mjs     Contrato compartido del índice (cliente + generador)
+    dom.ts               Helpers tipados: query, queryAll, on
+    inline-markdown.ts   Render inline seguro para valores de `meta`
+    site.mjs             SITE_BASE compartido con tests y scripts
+  scripts/
+    enhance.ts           Entrada de cliente; llama a cada `initX()`
+    modules/             Una responsabilidad por módulo (tema, copiar, TOC…)
+    search/              Búsqueda global y local (entrada, vista, índice local)
+  plugins/               Plugins mdast/hast (sim, cards, callout, mermaid…)
+  components/            UI Astro (DocMeta, TocMenu, SearchBar…)
+  layouts/               BaseLayout y DocLayout
+  pages/                 índice y [...slug] (getStaticPaths desde la colección)
+
+scripts/                 Lints y utilidades de contenido (Node, .mjs)
+  lib/icon-set.mjs       Set canónico de iconos (fuente: docs/icon-system.md)
+  lib/content-constants.mjs  Allowlists de secciones y niveles
+  lint-icons.mjs         Iconos en títulos y frontmatter
+  lint-language.mjs      Español neutro (sin voseo)
+  lint-content.mjs       Frontmatter, links internos y anclas
+  new-guide.mjs          Scaffolder de documentos
+  build-search-index.mjs Genera public/search-index.json
+  prepare-content.mjs    Copia y normaliza markdown desde el repo upstream
+```
+
+## Flujo de datos
+
+1. **Contenido → navegación.** `getNav()` lee la colección `docs`, agrupa por
+   sección y subcarpeta, y ordena por `id` (ruta del archivo). `route()` convierte
+   el `id` en URL pública. No existe `order`: para orden pedagógico se usan
+   prefijos numéricos en el nombre (`01-...`).
+2. **Contenido → búsqueda.** `scripts/build-search-index.mjs` recorre
+   `content/`, separa por encabezados y escribe `public/search-index.json`.
+   `src/lib/search-index.mjs` define la forma (`SearchDocument`/`SearchBlock`),
+   la valida en el cliente (`parseSearchIndex`) y la normaliza en el generador
+   (`normalizeDocument`).
+3. **Markdown → HTML.** `astro.config.mjs` registra plugins mdast:
+   `mdastRemoveH1` (el H1 lo pinta el layout), `mdastCards` (`<!-- cards -->`),
+   `mdastMermaid`, `mdastSim` (`:::sim`) y `mdastCallout` (`:::callout`).
+   `hastCleanHeadingIds` y `hastTableWrap` ajustan el HTML final.
+4. **Cliente.** `BaseLayout` importa `src/scripts/enhance.ts`, que inicializa
+   los módulos de `scripts/modules/` y `scripts/search/`. Todo es progressive
+   enhancement: sin JS el contenido sigue siendo legible.
+5. **Índice de página.** Existe un único índice: el menú de la topbar
+   (`TocMenu`), que reutiliza los `headings` de Astro y marca la sección activa.
+   No hay índice lateral ni lista `## 📑 Índice` escrita a mano en el contenido.
+
+## Cómo añadir un documento
+
+```bash
+pnpm new:guide guides mi-guia --title="Mi guía — qué resuelve" --level="Básico" --icon="⚡"
+```
+
+El scaffolder copia el esqueleto de [`guide-template.md`](./guide-template.md),
+valida el icono contra el set canónico y se niega a sobrescribir.
+
+Después:
+
+1. Completa el frontmatter. `meta:` es una lista de filas
+   `{ label, value?, links? }`; los enlaces internos van como `links[].id` y
+   `DocMeta` los resuelve con `route()`.
+2. Usa `:::callout{state=warning|tip|danger label="..."}` para advertencias.
+3. Verifica en local: `pnpm verify`.
+
+## Lints y verificación
+
+| Comando | Qué valida |
+|---|---|
+| `pnpm lint:icons` | Todo título y `title:` empieza por un icono del set |
+| `pnpm lint:language` | Español neutro (sin voseo ni regionalismos) |
+| `pnpm lint:content` | Frontmatter, links internos y anclas |
+| `pnpm check` | Tipos (Astro + TS strict) |
+| `pnpm test` | Unitarios (Vitest) |
+| `pnpm test:e2e` | E2E, accesibilidad (axe) y presupuestos de CSS/JS |
+| `pnpm verify` | Toda la cadena anterior, en orden |
+
+`lint:content` distingue **error** de **aviso**:
+
+- **Error:** frontmatter incompleto o fuera de allowlist, link con base
+  incorrecta, sin barra final, sección desconocida, o ancla sin destino.
+- **Aviso:** link bien formado a un `id` que aún no está en `content/`; se
+  asume pendiente de sync upstream y no rompe CI.
+
+Las anclas se validan contra `dist/`, así que `lint:content` debe correr tras
+`pnpm build` (CI y `pnpm verify` ya lo hacen en ese orden).
+
+## CI
+
+`.github/workflows/ci.yml` tiene dos jobs:
+
+- **verify:** `lint:icons`, `lint:language`, `check`, `build` y `lint:content`.
+- **test:** instala Chromium y corre `pnpm test:all` (unitarios + e2e, que
+  incluyen axe y presupuestos).

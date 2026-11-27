@@ -38,23 +38,6 @@ diff -rq /tmp/etc-antes /etc
 
 ---
 
-## 📑 Índice
-
-1. [¿Qué es diff?](#qué-es-diff)
-2. [Modelo mental](#modelo-mental)
-3. [Sintaxis básica](#sintaxis-básica)
-4. [Salida clave](#salida-clave)
-5. [Opciones principales](#opciones-principales)
-6. [Patrones de uso](#patrones-de-uso)
-7. [Uso en troubleshooting](#uso-en-troubleshooting)
-8. [Combinación con otras herramientas](#combinación-con-otras-herramientas)
-9. [Uno-liners imprescindibles](#uno-liners-imprescindibles)
-10. [Errores comunes](#errores-comunes)
-11. [Buenas prácticas](#buenas-prácticas)
-12. [Referencias internas](#referencias-internas)
-
----
-
 ## 🧠 ¿Qué es diff?
 
 `diff` compara dos archivos —o dos árboles de directorios— **línea por línea** y reporta los bloques que no coinciden. No dice si el cambio es correcto: dice **qué cambió**.
