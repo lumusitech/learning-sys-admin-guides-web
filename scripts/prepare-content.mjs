@@ -193,7 +193,7 @@ function rewriteLinks(markdown, filePath, base) {
   const prefix = normalizeBase(base);
 
   return markdown.replace(/\]\(([^)\s]+?\.md)(#[^)]*)?\)/g, (match, target, anchor) => {
-    if (target.startsWith('/') || target.startsWith('http')) return match;
+    if (target.startsWith('/') || /^https?:\/\//.test(target)) return match;
 
     const resolved = path.posix.normalize(path.posix.join(dir, target));
     if (resolved.startsWith('..')) return match;
@@ -277,11 +277,15 @@ async function main() {
     for (const file of skipped) console.log(`  - ${file}`);
   }
 
-  // Refresca el allowlist de pendientes para que `lint:content` distinga
-  // "falta sincronizar" de un link roto.
-  const ids = collectUpstreamIds(sourceDir);
-  const allowlist = writePendingSync(ids);
-  console.log(`Allowlist actualizado: ${ids.length} ids → ${allowlist}`);
+  // El allowlist solo se refresca en una copia completa; una importación
+  // explícita (archivos o directorio temporal) no debe pisarlo.
+  if (explicitFiles.length === 0) {
+    const ids = collectUpstreamIds(sourceDir);
+    const allowlist = writePendingSync(ids);
+    console.log(`Allowlist actualizado: ${ids.length} ids → ${allowlist}`);
+  } else {
+    console.log('Allowlist: sin cambios (importación parcial)');
+  }
 }
 
 main().catch((error) => {
