@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memstress
+  namespace: k8s-lab
+  labels:
+    app: memstress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memstress
+  template:
+    metadata:
+      labels:
+        app: memstress
+    spec:
+      containers:
+        - name: app
+          image: python:3.12-alpine
+          command:
+            - python
+            - -c
+            - >
+              import time;
+              data = bytearray(200 * 1024 * 1024);
+              time.sleep(3600)
+          resources:
+            requests:
+              memory: 16Mi
+            limits:
+              memory: 32Mi

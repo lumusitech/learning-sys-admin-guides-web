@@ -7,6 +7,8 @@
  *   node scripts/sync-labs-assets.mjs --source=<dir> --check
  *
  * Excluye los `.md` (el README se publica como `content/labs/laboratorio-docker.md`).
+ * `public/labs` también contiene assets locales por módulo (k8s, db, …): solo
+ * se copian/comparan los archivos del upstream y no se borran los extras.
  * En modo `--check` compara hashes y falla si `public/labs` quedó desactualizado.
  */
 
@@ -18,7 +20,6 @@ import {
   mkdirSync,
   readdirSync,
   readFileSync,
-  rmSync,
   statSync,
 } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -64,12 +65,7 @@ if (check) {
     else if (hash(path) !== hash(target)) problems.push(`desactualizado ${rel}`);
   }
 
-  if (existsSync(dest)) {
-    const expected = new Set(files.map((file) => file.rel));
-    for (const { rel } of walk(dest)) {
-      if (!expected.has(rel)) problems.push(`sobra ${rel}`);
-    }
-  }
+  // Los assets locales (k8s, db, …) son extras legítimos: no se reportan.
 
   if (problems.length > 0) {
     console.error(`Labs assets: ${problems.length} diferencia(s) con el upstream.`);
@@ -79,7 +75,6 @@ if (check) {
 
   console.log(`Labs assets: OK (${files.length} archivos al día).`);
 } else {
-  rmSync(dest, { recursive: true, force: true });
   for (const { rel, path } of files) {
     const target = join(dest, rel);
     mkdirSync(dirname(target), { recursive: true });

@@ -114,6 +114,9 @@ también se regenera solo con `pnpm sync:allowlist <sourceDir>`.
 logs). Los assets se copian a `public/labs` con `pnpm sync:labs <sourceDir>`
 (`pnpm sync` lo hace en un sync completo o de `labs`).
 
+`public/labs` también aloja assets locales por módulo (`k8s`, `db`, …). El sync
+solo copia/compara los archivos del upstream y **no borra** esos extras.
+
 `pnpm lint:assets` valida que cada link a `${BASE}labs/...` resuelva a un
 archivo de `public/labs`; `pnpm sync:labs --check --source=<dir>` compara
 hashes con el upstream y detecta drift (también corre en el workflow semanal).
