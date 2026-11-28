@@ -335,7 +335,7 @@ done
 
 ## 🧪 Cómo practicarlo en el lab
 
-El [laboratorio Docker Dahua](../../labs/docker-compose.dahua.yml) incluye cámaras simuladas y NVR para practicar migración masiva:
+El [laboratorio Docker Dahua](/learning-sys-admin-guides-web/labs/docker-compose.dahua.yml) incluye cámaras simuladas y NVR para practicar migración masiva:
 
 ```bash
 # 1. Iniciar laboratorio
@@ -354,7 +354,7 @@ curl -s -u admin:admin "http://10.0.100.108/cgi-bin/magicBox.cgi?action=getSyste
 
 **Ejercicio:** Ejecuta el script de backup y cambio de contraseña sobre las cámaras simuladas del lab.
 
-Ver [laboratorio completo →](../../labs/docker-compose.dahua.yml)
+Ver [laboratorio completo →](/learning-sys-admin-guides-web/labs/docker-compose.dahua.yml)
 
 ---
 

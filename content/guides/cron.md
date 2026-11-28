@@ -393,4 +393,4 @@ crontab -r -i                                            # Borrar crontab con co
 - [`df`](/learning-sys-admin-guides-web/guides/df/) — monitoreo periódico de disco con cron
 - [`scenario`](/learning-sys-admin-guides-web/scenarios/system/11-cron-failure/) — tarea cron que falla en silencio
 - [`scenario`](/learning-sys-admin-guides-web/scenarios/security/04-suspicious-cron/) — entrada cron sospechosa
-- [`lab`](../labs/docker-compose.cron.yml) — laboratorio cron con fallos preconfigurados
+- [`lab`](/learning-sys-admin-guides-web/labs/docker-compose.cron.yml) — laboratorio cron con fallos preconfigurados

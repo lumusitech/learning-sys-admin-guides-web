@@ -5,6 +5,7 @@ dist/
 .env.production
 .DS_Store
 *.log
+!public/labs/**/*.log
 public/search-index.json
 playwright-report/
 test-results/

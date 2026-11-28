@@ -51,6 +51,15 @@ try {
     stdio: 'inherit',
   });
   if (run.status !== 0) process.exit(run.status ?? 1);
+
+  // Los assets de labs se publican en public/labs. En un sync de otra sección
+  // no se tocan para no borrar/copiar archivos fuera de contexto.
+  if (!sectionArg || sectionArg === 'labs') {
+    const labs = spawnSync(process.execPath, ['scripts/sync-labs-assets.mjs', source], {
+      stdio: 'inherit',
+    });
+    if (labs.status !== 0) process.exit(labs.status ?? 1);
+  }
 } finally {
   if (temp) rmSync(temp, { recursive: true, force: true });
 }

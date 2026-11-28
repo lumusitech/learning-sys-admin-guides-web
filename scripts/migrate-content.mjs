@@ -13,7 +13,8 @@
  */
 
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, posix, relative } from 'node:path';
+import { SITE_BASE } from '../src/lib/site.mjs';
 import { SECTIONS } from './lib/content-constants.mjs';
 import { iconKey, leadingEmoji, loadIconSet } from './lib/icon-set.mjs';
 
@@ -27,6 +28,7 @@ if (sectionArg && !SECTIONS.includes(sectionArg)) {
 }
 
 const set = loadIconSet();
+const BASE = SITE_BASE.endsWith('/') ? SITE_BASE : `${SITE_BASE}/`;
 
 /* ------------------------------------------------------------------ */
 /* Iconos                                                              */
@@ -278,6 +280,35 @@ function removeUpstreamNav(lines, stats) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Assets de labs                                                      */
+/* ------------------------------------------------------------------ */
+
+const LAB_ASSET =
+  /\]\(([^)\s]+?\.(?:ya?ml|sh|txt|log|conf|sql|json|html|cgi|js|bak|jpe?g|png|svg|gif|webp))(#.*)?\)/gi;
+
+/** Reescribe links relativos a `labs/` como assets absolutos del sitio. */
+function rewriteLabAssets(lines, filePath, stats) {
+  const dir = posix.dirname(filePath);
+  let fence = false;
+
+  return lines.map((line) => {
+    if (/^\s*```/.test(line)) {
+      fence = !fence;
+      return line;
+    }
+    if (fence) return line;
+
+    return line.replace(LAB_ASSET, (match, target, anchor = '') => {
+      if (target.startsWith('/') || /^https?:\/\//.test(target)) return match;
+      const resolved = posix.normalize(posix.join(dir, target));
+      if (!resolved.startsWith('labs/')) return match;
+      stats.assets += 1;
+      return `](${BASE}${resolved}${anchor})`;
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /* Callouts                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -341,7 +372,7 @@ function splitFrontmatter(raw) {
   return { front: match[1], body: raw.slice(match[0].length).replace(/^\n+/, '') };
 }
 
-const stats = { files: 0, h1: 0, h2: 0, badIcon: 0, language: 0, callouts: 0, indexes: 0, nav: 0, fallback: [] };
+const stats = { files: 0, h1: 0, h2: 0, badIcon: 0, language: 0, callouts: 0, indexes: 0, nav: 0, assets: 0, fallback: [] };
 
 const files = sectionArg
   ? [...markdownFiles(join('content', sectionArg))]
@@ -416,7 +447,12 @@ for (const file of files) {
   }
 
   const withLanguage = neutralSpanish(lines, stats);
-  const withoutIndex = removeIndexSections(withLanguage, stats);
+  const withAssets = rewriteLabAssets(
+    withLanguage,
+    relative('content', file).replace(/\\/g, '/'),
+    stats,
+  );
+  const withoutIndex = removeIndexSections(withAssets, stats);
   const withoutNav = removeUpstreamNav(withoutIndex, stats);
   const withCallouts = convertCallouts(withoutNav, stats);
   const output = `---\n${newFront}\n---\n\n${withCallouts.join('\n').replace(/^\n+/, '')}`;
@@ -428,7 +464,7 @@ for (const file of files) {
 }
 
 console.log(
-  `Migrados: ${stats.files} archivos | h2 iconados: ${stats.h2} | iconos reemplazados: ${stats.badIcon} | idioma: ${stats.language} | índices: ${stats.indexes} | nav: ${stats.nav} | callouts: ${stats.callouts}`,
+  `Migrados: ${stats.files} archivos | h2 iconados: ${stats.h2} | iconos reemplazados: ${stats.badIcon} | idioma: ${stats.language} | índices: ${stats.indexes} | nav: ${stats.nav} | assets: ${stats.assets} | callouts: ${stats.callouts}`,
 );
 if (stats.fallback.length > 0) {
   console.log(`\nIconos de fallback (revisar significado): ${stats.fallback.length}`);

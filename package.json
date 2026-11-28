@@ -16,13 +16,15 @@
     "lint:icons": "node scripts/lint-icons.mjs",
     "lint:language": "node scripts/lint-language.mjs",
     "lint:content": "node scripts/lint-content.mjs",
+    "lint:assets": "node scripts/lint-assets.mjs",
     "sync:allowlist": "node scripts/sync-allowlist.mjs",
+    "sync:labs": "node scripts/sync-labs-assets.mjs",
     "search:index": "node scripts/build-search-index.mjs",
     "content": "node scripts/prepare-content.mjs",
     "sync": "node scripts/sync-content.mjs",
     "migrate:content": "node scripts/migrate-content.mjs",
     "new:guide": "node scripts/new-guide.mjs",
-    "verify": "pnpm lint:icons && pnpm lint:language && pnpm check && pnpm build && pnpm lint:content && pnpm test && pnpm test:e2e"
+    "verify": "pnpm lint:icons && pnpm lint:language && pnpm check && pnpm build && pnpm lint:content && pnpm lint:assets && pnpm test && pnpm test:e2e"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.10",

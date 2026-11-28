@@ -298,4 +298,4 @@ ssh admin@192.168.100.100 "find /mnt/sda/record -name '*.mp4' -mtime 0" | xargs 
 - [`dahua-troubleshooting.md`](/learning-sys-admin-guides-web/guides/dahua/dahua-troubleshooting/) — diagnóstico de fallas
 - [`smartctl`](/learning-sys-admin-guides-web/guides/smartctl/) — salud del disco del NVR (SMART, sectores reasignados)
 - [`../../scenarios/dahua/02-nvr-sin-disco.md`](/learning-sys-admin-guides-web/scenarios/dahua/02-nvr-sin-disco/) — escenario práctico
-- [`../../labs/docker-compose.dahua.yml`](../../labs/docker-compose.dahua.yml) — laboratorio Dahua: `cd labs && docker compose -f docker-compose.dahua.yml up -d`
+- [`../../labs/docker-compose.dahua.yml`](/learning-sys-admin-guides-web/labs/docker-compose.dahua.yml) — laboratorio Dahua: `cd labs && docker compose -f docker-compose.dahua.yml up -d`
