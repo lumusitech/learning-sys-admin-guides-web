@@ -107,6 +107,12 @@ const ICON_RULES = [
   [/contar|duplicados|[uú]nicos|ignorar|stdin/i, '🎛️'],
   [/paralelizar|reemplazar|manejar espacios|c[oó]mo funciona|lectura y escritura/i, '🎛️'],
   [/confirmar antes|modo verbose/i, '🎛️'],
+  [/modo docente|docente|clase|pr[aá]ctica evaluable/i, '🎓'],
+  [/prevenci[oó]n|hardening/i, '✅'],
+  [/variantes?/i, '🔄'],
+  [/\bfase \d/i, '🗺️'],
+  [/entrega final/i, '🎯'],
+  [/script completo|\bscript\b/i, '📝'],
 
   // Categorías de sección (h2)
   [/\b(quick|comando rápido|comandos? rápidos?)\b/i, '⚡'],
@@ -177,6 +183,10 @@ const REPLACEMENTS = [
   ['elevá', 'eleva'], ['fijate', 'fíjate'], ['acordate', 'acuérdate'], ['olvidate', 'olvídate'],
   ['quedate', 'quédate'], ['decime', 'dime'], ['contame', 'cuéntame'], ['dale', 'continúa'],
   ['vos', 'tú'], ['acá', 'aquí'], ['laburo', 'trabajo'], ['guita', 'dinero'],
+  ['hacés', 'haces'], ['revisás', 'revisas'], ['encontrás', 'encuentras'],
+  ['llegás', 'llegas'], ['llevás', 'llevas'], ['cargás', 'cargas'], ['instalás', 'instalas'],
+  ['configurás', 'configuras'], ['pensás', 'piensas'], ['venís', 'vienes'], ['salís', 'sales'],
+  ['decís', 'dices'], ['buscás', 'buscas'], ['armás', 'armas'],
 ];
 
 function replaceWord(text, from, to) {
@@ -232,6 +242,21 @@ function removeIndexSections(lines, stats) {
   }
 
   return out;
+}
+
+/* ------------------------------------------------------------------ */
+/* Navegación del upstream                                             */
+/* ------------------------------------------------------------------ */
+
+/** Quita back-links y enlaces a README de sección (el sitio tiene su navegación). */
+function removeUpstreamNav(lines, stats) {
+  return lines.filter((line) => {
+    const standalone = /^\s*(?:⬅️\s*)?\[[^\]]+\]\([^)]*README\/?\)\s*$/.test(line);
+    const listItem = /^\s*[-*]\s*\[[^\]]+\]\([^)]*README\/?\)(?:\s*[—–-]\s*.*)?$/.test(line);
+    if (!standalone && !listItem) return true;
+    stats.nav += 1;
+    return false;
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -298,7 +323,7 @@ function splitFrontmatter(raw) {
   return { front: match[1], body: raw.slice(match[0].length).replace(/^\n+/, '') };
 }
 
-const stats = { files: 0, h1: 0, h2: 0, badIcon: 0, language: 0, callouts: 0, indexes: 0, fallback: [] };
+const stats = { files: 0, h1: 0, h2: 0, badIcon: 0, language: 0, callouts: 0, indexes: 0, nav: 0, fallback: [] };
 
 const files = sectionArg
   ? [...markdownFiles(join('content', sectionArg))]
@@ -373,7 +398,8 @@ for (const file of files) {
 
   const withLanguage = neutralSpanish(lines, stats);
   const withoutIndex = removeIndexSections(withLanguage, stats);
-  const withCallouts = convertCallouts(withoutIndex, stats);
+  const withoutNav = removeUpstreamNav(withoutIndex, stats);
+  const withCallouts = convertCallouts(withoutNav, stats);
   const output = `---\n${newFront}\n---\n\n${withCallouts.join('\n').replace(/^\n+/, '')}`;
 
   if (output !== raw) {
@@ -383,7 +409,7 @@ for (const file of files) {
 }
 
 console.log(
-  `Migrados: ${stats.files} archivos | h2 iconados: ${stats.h2} | iconos reemplazados: ${stats.badIcon} | idioma: ${stats.language} | índices: ${stats.indexes} | callouts: ${stats.callouts}`,
+  `Migrados: ${stats.files} archivos | h2 iconados: ${stats.h2} | iconos reemplazados: ${stats.badIcon} | idioma: ${stats.language} | índices: ${stats.indexes} | nav: ${stats.nav} | callouts: ${stats.callouts}`,
 );
 if (stats.fallback.length > 0) {
   console.log(`\nIconos de fallback (revisar significado): ${stats.fallback.length}`);
