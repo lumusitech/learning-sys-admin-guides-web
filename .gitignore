@@ -7,5 +7,9 @@ dist/
 *.log
 !public/labs/**/*.log
 public/search-index.json
+public/labs/boot/cache/
+public/labs/boot/*.qcow2
+public/labs/boot/*.pid
+public/labs/boot/*.log
 playwright-report/
 test-results/
