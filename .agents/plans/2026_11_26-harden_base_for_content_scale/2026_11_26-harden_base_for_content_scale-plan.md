@@ -156,4 +156,4 @@ Tasks to close the phase, in order:
 
 ## Next step
 
-Fase de contenido en curso: **`guides` (74), `scenarios` (58) y `concepts` (14) importados y migrados** (147 documentos). Faltan `reference` y `labs`. Para cada sección: `pnpm sync --section=<s> --skip-existing` + `pnpm migrate:content --section=<s>` + `pnpm verify`, revisando el diff (los iconos de `h2` salen de reglas heurísticas y pueden necesitar ajuste semántico; los escenarios sin `Nivel` necesitan un `level` manual).
+Fase de contenido **completa**: 159 documentos (guides 74, scenarios 58, concepts 14, reference 12, labs 1) y 0 avisos de sync. Queda la revisión editorial: iconos heurísticos de `h2`, `level` asignados a escenarios y assets de labs (no publicados). Para una sección nueva: `pnpm sync --section=<s> --skip-existing` + `pnpm migrate:content --section=<s>` + `pnpm verify`.

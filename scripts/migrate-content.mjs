@@ -119,6 +119,12 @@ const ICON_RULES = [
   [/principios?/i, '🧭'],
   [/\bcapas\b/i, '🧩'],
   [/locking/i, '🔐'],
+  [/urls? rtsp|rtsp/i, '📡'],
+  [/c[oó]digos? de error/i, '⚠️'],
+  [/l[ií]mites de fds?/i, '📊'],
+  [/^2xx|[eé]xito/i, '✅'],
+  [/^4xx|error del cliente/i, '⚠️'],
+  [/cu[aá]ndo preocuparse/i, '🔍'],
 
   // Categorías de sección (h2)
   [/\b(quick|comando rápido|comandos? rápidos?)\b/i, '⚡'],

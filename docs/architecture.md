@@ -107,13 +107,18 @@ pnpm sync --section=guides --skip-existing
 `pnpm content <sourceDir>` sigue disponible para una copia manual. El allowlist
 también se regenera solo con `pnpm sync:allowlist <sourceDir>`.
 
+`labs` es la excepción: upstream solo tiene un `README.md` con los ejercicios y
+assets que no se publican. Se publica como `content/labs/laboratorio-docker.md`;
+si cambia, se reimporta con una copia explícita (en importaciones parciales el
+allowlist no se toca).
+
 `scripts/pending-sync.json` es un snapshot determinista de los ids que existen
 upstream (sin README ni archivos de raíz). Se commitea para que CI —sin acceso
 al repo origen— distinga un link pendiente de un typo. El workflow
 `Sync allowlist` corre semanalmente y falla si el snapshot quedó desactualizado.
 
-> Importar todo el contenido upstream todavía requiere una migración (iconos en
-> títulos, español neutro y cabeceras a `meta`). `pnpm sync` copia, pero el
+> El contenido upstream ya está importado (159 documentos). La migración sigue
+> disponible para reimportar o añadir secciones: `pnpm sync` copia, pero el
 > contenido se revisa y adapta antes de commitear.
 
 ### Migración por sección
