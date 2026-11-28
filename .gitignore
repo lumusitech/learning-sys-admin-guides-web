@@ -13,3 +13,5 @@ public/labs/boot/*.pid
 public/labs/boot/*.log
 playwright-report/
 test-results/
+
+public/labs/identity/keys/
