@@ -1,5 +1,5 @@
 ---
-title: "🧩 Escenario: PostgreSQL sin conexiones — «too many clients already»"
+title: "🧩 Escenario: PostgreSQL sin conexiones — slots agotados"
 level: "Intermedio"
 section: "scenarios"
 meta:
@@ -15,20 +15,20 @@ meta:
         label: "Laboratorio de bases de datos"
 ---
 
-# 🧩 Escenario: PostgreSQL sin conexiones — «too many clients already»
+# 🧩 Escenario: PostgreSQL sin conexiones — slots agotados
 
 ---
 
 ## 🎯 Problema
 
-La aplicación no puede abrir nuevas conexiones a PostgreSQL y recibe `FATAL: sorry, too many clients already`. El servicio sigue vivo y las conexiones existentes responden, pero cualquier cliente nuevo falla. Hay que distinguir si el problema es un límite de `max_connections`, un pool mal dimensionado, conexiones idle que nadie cierra o una fuga de conexiones en la aplicación.
+La aplicación no puede abrir nuevas conexiones a PostgreSQL. Según cuántos slots queden, el error puede ser `FATAL: remaining connection slots are reserved for roles with the SUPERUSER attribute` (quedan slots reservados) o `FATAL: sorry, too many clients already` (no queda ninguno). El servicio sigue vivo y las conexiones existentes responden, pero cualquier cliente nuevo falla. Hay que distinguir si el problema es un límite de `max_connections`, un pool mal dimensionado, conexiones idle que nadie cierra o una fuga de conexiones en la aplicación.
 
 ---
 
 ## ⚡ Quick command (SRE)
 
 ```bash
-docker compose exec -T postgres-primary psql -U app -d app \
+docker compose exec -T postgres-primary psql -U postgres -d app \
   -c "SELECT state, count(*) FROM pg_stat_activity GROUP BY state ORDER BY count(*) DESC;"
 ```
 
@@ -39,14 +39,14 @@ docker compose exec -T postgres-primary psql -U app -d app \
 - La suma de conexiones de `app` se acerca a 17 (los slots no reservados).
 - `SHOW max_connections` devuelve `20`.
 - `superuser_reserved_connections` reserva 3 slots para `postgres`; `app` es un rol normal y solo puede usar los otros 17.
-- La app muestra `FATAL: sorry, too many clients already`.
+- La app muestra `FATAL: remaining connection slots are reserved for roles with the SUPERUSER attribute`; si también se llenan los slots reservados, pasa a `FATAL: sorry, too many clients already`.
 - `psql -U postgres` todavía puede entrar por los slots reservados.
 - En `pg_stat_activity` aparecen muchas conexiones del mismo usuario o cliente.
 
 Comprueba el límite y el reparto:
 
 ```bash
-docker compose exec -T postgres-primary psql -U app -d app \
+docker compose exec -T postgres-primary psql -U postgres -d app \
   -c "SHOW max_connections;" \
   -c "SHOW superuser_reserved_connections;" \
   -c "SELECT usename, client_addr, state, count(*) FROM pg_stat_activity GROUP BY 1,2,3 ORDER BY 4 DESC;"
@@ -71,7 +71,7 @@ Dos estados concentran los incidentes:
 1. **`idle`**: la conexión está abierta pero sin trabajo. Es normal en un pool; es un problema si el pool es más grande que la necesidad real.
 2. **`idle in transaction`**: la transacción quedó abierta sin hacer nada. Además de ocupar un slot, retiene locks y bloquea el vacuum.
 
-En el laboratorio, `pgbench -c 17` ocupa exactamente los 17 slots disponibles para `app`. Con esos slots llenos, `psql -U app` recibe `sorry, too many clients already`, mientras que `psql -U postgres` puede entrar por los 3 slots reservados. Esa diferencia entre rol normal y superusuario es parte del ejercicio.
+En el laboratorio, `pgbench -c 17` ocupa exactamente los 17 slots disponibles para `app`. Con esos slots llenos, `psql -U app` recibe `remaining connection slots are reserved for roles with the SUPERUSER attribute`; si además se llenan los 3 slots de `postgres`, el error pasa a `sorry, too many clients already`. `psql -U postgres` puede entrar por los reservados. Esa diferencia entre rol normal y superusuario es parte del ejercicio.
 
 ---
 
@@ -80,7 +80,7 @@ En el laboratorio, `pgbench -c 17` ocupa exactamente los 17 slots disponibles pa
 ### 1. Medir el consumo actual
 
 ```bash
-docker compose exec -T postgres-primary psql -U app -d app -c \
+docker compose exec -T postgres-primary psql -U postgres -d app -c \
   "SELECT count(*) AS total, count(*) FILTER (WHERE state = 'idle') AS idle,
           count(*) FILTER (WHERE state = 'idle in transaction') AS idle_tx
    FROM pg_stat_activity WHERE backend_type = 'client backend';"
@@ -89,7 +89,7 @@ docker compose exec -T postgres-primary psql -U app -d app -c \
 ### 2. Ver quién ocupa los slots
 
 ```bash
-docker compose exec -T postgres-primary psql -U app -d app -c \
+docker compose exec -T postgres-primary psql -U postgres -d app -c \
   "SELECT pid, usename, client_addr, state, now() - state_change AS en_estado,
           left(query, 80) AS query
    FROM pg_stat_activity
@@ -104,13 +104,13 @@ docker compose exec -T postgres-primary psql -U app -d app -c \
 ./scripts/psql.sh
 ```
 
-La segunda orden debería fallar con `sorry, too many clients already`. `break.sh 01` deja `pgbench` corriendo 10 minutos con 17 clientes.
+La segunda orden debería fallar con `remaining connection slots are reserved for roles with the SUPERUSER attribute`. `break.sh 01` deja `pgbench` corriendo 10 minutos con 17 clientes.
 
 ### 4. Liberar slots sin matar trabajo legítimo
 
 ```bash
 # Mira primero qué vas a cerrar
-docker compose exec -T postgres-primary psql -U app -d app -c \
+docker compose exec -T postgres-primary psql -U postgres -d app -c \
   "SELECT pid, usename, state, now() - state_change AS en_estado, left(query, 80)
    FROM pg_stat_activity
    WHERE state = 'idle' AND backend_type = 'client backend';"
@@ -163,7 +163,7 @@ SHOW work_mem;
 
 - `SELECT count(*) FROM pg_stat_activity` está por debajo de `max_connections`.
 - `./scripts/psql.sh -c "SELECT 1;"` responde.
-- La aplicación abre conexiones nuevas sin `too many clients`.
+- La aplicación abre conexiones nuevas sin errores de slots.
 - No quedan procesos `pgbench` en `pg_stat_activity`.
 - `pg_stat_database.numbackends` vuelve a un valor estable.
 

@@ -15,7 +15,10 @@ docker compose exec -T postgres-primary psql -U app -d app \
 echo
 echo "== PostgreSQL réplica =="
 docker compose exec -T postgres-replica psql -U app -d app \
-  -c "SELECT pg_is_in_recovery() AS replica, now() - pg_last_xact_replay_timestamp() AS replay_lag;"
+  -c "SELECT pg_is_in_recovery() AS replica,
+             pg_last_wal_receive_lsn() AS recibido,
+             pg_last_wal_replay_lsn() AS aplicado,
+             pg_wal_lsn_diff(pg_last_wal_receive_lsn(), pg_last_wal_replay_lsn()) AS bytes_pendientes;"
 
 echo
 echo "== MySQL =="

@@ -24,7 +24,9 @@ case "${1:-}" in
   03)
     docker compose exec -T postgres-primary psql -U postgres -d app -c \
       "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='app' AND query LIKE '%pg_sleep%' AND pid <> pg_backend_pid();" >/dev/null
-    echo "Transacción bloqueante terminada."
+    docker compose exec -T postgres-primary psql -U postgres -d app -c \
+      "UPDATE orders SET status='paid' WHERE id=1;" >/dev/null
+    echo "Transacción bloqueante terminada y fila restaurada."
     ;;
   04)
     docker compose exec -T -e MYSQL_PWD=app mysql mysql -uapp app -e \
@@ -33,7 +35,8 @@ case "${1:-}" in
     ;;
   05)
     docker compose exec -T redis redis-cli FLUSHALL >/dev/null
-    echo "Redis vaciado."
+    docker compose exec -T redis redis-cli CONFIG RESETSTAT >/dev/null
+    echo "Redis vaciado y contadores reiniciados."
     ;;
   06)
     docker compose exec -T postgres-primary pg_restore -U app -d app --clean --if-exists /tmp/app.dump

@@ -28,7 +28,7 @@ Las lecturas contra la réplica devuelven datos viejos o fallan, mientras el pri
 ## ⚡ Quick command (SRE)
 
 ```bash
-docker compose ps postgres-replica
+docker compose ps -a postgres-replica
 docker compose exec -T postgres-primary psql -U app -d app \
   -c "SELECT client_addr, state, sent_lsn, replay_lsn, replay_lag FROM pg_stat_replication;"
 ```
@@ -39,7 +39,7 @@ docker compose exec -T postgres-primary psql -U app -d app \
 
 Con la réplica sana:
 
-- `docker compose ps` muestra `postgres-replica` como `running` y `healthy`.
+- `docker compose ps -a` muestra `postgres-replica` como `running` y `healthy`.
 - `pg_stat_replication` tiene una fila con `state = streaming`.
 - `replay_lag` es de milisegundos o segundos, no de minutos.
 - La réplica responde `SELECT pg_is_in_recovery()` con `t`.
@@ -47,7 +47,7 @@ Con la réplica sana:
 Con la réplica caída o retrasada:
 
 - `pg_stat_replication` devuelve 0 filas.
-- `docker compose ps` muestra el contenedor `exited` o `unhealthy`.
+- `docker compose ps -a` muestra el contenedor `exited` o `unhealthy`.
 - `pg_wal` puede crecer si hay un replication slot o retención configurada; sin slot, el primario recicla WAL y la réplica puede quedarse sin lo que necesita.
 - La réplica responde con datos antiguos o no responde.
 
@@ -77,7 +77,7 @@ Si el primario recicla WAL que la réplica todavía necesita, la réplica no pue
 ### 1. Comprobar el estado de los contenedores
 
 ```bash
-docker compose ps
+docker compose ps -a
 docker compose logs --tail=80 postgres-replica
 ```
 
@@ -112,7 +112,7 @@ Si la réplica está en recovery, `pg_last_xact_replay_timestamp()` devuelve la 
 
 ```bash
 ./scripts/break.sh 02
-docker compose ps
+docker compose ps -a
 docker compose exec -T postgres-primary psql -U app -d app -c \
   "SELECT count(*) FROM pg_stat_replication;"
 ```
