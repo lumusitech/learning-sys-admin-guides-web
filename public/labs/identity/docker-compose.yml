@@ -1,0 +1,10 @@
+services:
+  identity:
+    build: .
+    container_name: identity-lab
+    hostname: identity-lab
+    ports:
+      - "2222:22"
+    volumes:
+      - ./keys:/lab-keys:ro
+    restart: unless-stopped
