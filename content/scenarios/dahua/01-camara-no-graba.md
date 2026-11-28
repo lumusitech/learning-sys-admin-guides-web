@@ -276,7 +276,7 @@ curl -s -u admin:admin \
 
 ## 🧪 Cómo practicarlo en el lab
 
-Usa el [laboratorio Docker Dahua](../../labs/docker-compose.dahua.yml) para simular los comandos del escenario contra una cámara y NVR virtualizados. Aplicá los pasos del procedimiento para diagnosticar cada caso.
+Usa el [laboratorio Docker Dahua](/learning-sys-admin-guides-web/labs/docker-compose.dahua.yml) para simular los comandos del escenario contra una cámara y NVR virtualizados. Aplicá los pasos del procedimiento para diagnosticar cada caso.
 
 ---
 

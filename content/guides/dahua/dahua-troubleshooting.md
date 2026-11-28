@@ -666,4 +666,4 @@ for i in $(seq 10 30); do curl -s -m 2 -u admin:admin "http://192.168.100.$i/cgi
 - [`dahua-rtsp-stream.md`](/learning-sys-admin-guides-web/guides/dahua/dahua-rtsp-stream/) — diagnóstico RTSP
 - [`smartctl`](/learning-sys-admin-guides-web/guides/smartctl/) — salud del disco del NVR (SMART, sectores reasignados)
 - [`../../scenarios/dahua/`](../../scenarios/dahua/) — escenarios prácticos
-- [`../../labs/docker-compose.dahua.yml`](../../labs/docker-compose.dahua.yml) — laboratorio Dahua: `cd labs && docker compose -f docker-compose.dahua.yml up -d`
+- [`../../labs/docker-compose.dahua.yml`](/learning-sys-admin-guides-web/labs/docker-compose.dahua.yml) — laboratorio Dahua: `cd labs && docker compose -f docker-compose.dahua.yml up -d`

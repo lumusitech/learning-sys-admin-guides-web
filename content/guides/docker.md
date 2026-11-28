@@ -655,8 +655,8 @@ COPY . /app
 ## 🔗 Referencias internas
 
 - [`scenarios/system/14-docker-troubleshooting`](/learning-sys-admin-guides-web/scenarios/system/14-docker-troubleshooting/) — troubleshooting de contenedores
-- [`labs/docker-compose.broken.yml`](../labs/docker-compose.broken.yml) — laboratorio de servicios rotos
-- [`labs/docker-compose.docker.yml`](../labs/docker-compose.docker.yml) — laboratorio de Docker troubleshooting
+- [`labs/docker-compose.broken.yml`](/learning-sys-admin-guides-web/labs/docker-compose.broken.yml) — laboratorio de servicios rotos
+- [`labs/docker-compose.docker.yml`](/learning-sys-admin-guides-web/labs/docker-compose.docker.yml) — laboratorio de Docker troubleshooting
 - [`guides/systemd_journalctl`](/learning-sys-admin-guides-web/guides/systemd_journalctl/) — gestión de servicios (analogía con Docker)
 - [`guides/production_server`](/learning-sys-admin-guides-web/guides/production_server/) — Docker en producción
 - [`guides/docker_debug_container`](/learning-sys-admin-guides-web/guides/docker_debug_container/) — contenedores efímeros de diagnóstico (netshoot, namespaces, nsenter)

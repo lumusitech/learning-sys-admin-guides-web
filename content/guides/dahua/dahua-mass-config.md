@@ -366,4 +366,4 @@ for ip in $(cat cameras.txt); do curl -s -u admin:NuevaPass "http://$ip/cgi-bin/
 - [`dahua-discovery.md`](/learning-sys-admin-guides-web/guides/dahua/dahua-discovery/) — descubrir cámaras
 - [`dahua-camera-api.md`](/learning-sys-admin-guides-web/guides/dahua/dahua-camera-api/) — API completa
 - [`../../scenarios/dahua/03-migracion-masiva.md`](/learning-sys-admin-guides-web/scenarios/dahua/03-migracion-masiva/) — escenario práctico
-- [`../../labs/docker-compose.dahua.yml`](../../labs/docker-compose.dahua.yml) — laboratorio Docker: `cd labs && docker compose -f docker-compose.dahua.yml up -d && docker exec -it dahua-client sh`
+- [`../../labs/docker-compose.dahua.yml`](/learning-sys-admin-guides-web/labs/docker-compose.dahua.yml) — laboratorio Docker: `cd labs && docker compose -f docker-compose.dahua.yml up -d && docker exec -it dahua-client sh`

@@ -1,0 +1,159 @@
+# Laboratorio Docker para prácticas de sysadmin
+# Uso: docker compose up -d
+# Ver README para escenarios disponibles
+
+services:
+  # === SSH LAB ===
+
+  ssh-hardened:
+    image: linuxserver/openssh-server:latest
+    container_name: ssh-hardened
+    hostname: ssh-hardened
+    environment:
+      - USER_NAME=admin
+      - PUBLIC_KEY_FILE=/config/ssh-key.pub
+      - PASSWORD_ACCESS=false
+      - SUDO_ACCESS=true
+      - USER_PASSWORD= # vacío = solo clave
+    ports:
+      - "2222:22"
+    volumes:
+      - ./ssh-key.pub:/config/ssh-key.pub:ro
+      - ssh_data:/config
+    networks:
+      - lab
+    restart: unless-stopped
+
+  ssh-weak:
+    image: linuxserver/openssh-server:latest
+    container_name: ssh-weak
+    hostname: ssh-weak
+    environment:
+      - USER_NAME=admin
+      - PASSWORD_ACCESS=true
+      - USER_PASSWORD=admin123
+      - SUDO_ACCESS=true
+    ports:
+      - "2223:22"
+    networks:
+      - lab
+    restart: unless-stopped
+
+  # Servidor interno (sin puerto expuesto, accesible vía bastion)
+  ssh-internal:
+    image: linuxserver/openssh-server:latest
+    container_name: ssh-internal
+    hostname: ssh-internal
+    environment:
+      - USER_NAME=admin
+      - PUBLIC_KEY_FILE=/config/ssh-key.pub
+      - PASSWORD_ACCESS=false
+    volumes:
+      - ./ssh-key.pub:/config/ssh-key.pub:ro
+    networks:
+      - lab
+    restart: unless-stopped
+
+  # === WEB SERVERS ===
+
+  web-nginx:
+    image: nginx:alpine
+    container_name: web-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./www:/usr/share/nginx/html:ro
+    networks:
+      - lab
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  web-apache:
+    image: httpd:alpine
+    container_name: web-apache
+    ports:
+      - "8081:80"
+    networks:
+      - lab
+    restart: unless-stopped
+
+  # === DATABASES ===
+
+  db-mysql:
+    image: mariadb:latest
+    container_name: db-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - lab
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  db-postgres:
+    image: postgres:alpine
+    container_name: db-postgres
+    environment:
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_DB=app
+      - POSTGRES_USER=admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lab
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # === MONITORING ===
+
+  monitoring:
+    build:
+      context: .
+      dockerfile: monitoring.Dockerfile
+    container_name: monitoring
+    hostname: monitoring
+    ports:
+      - "2299:22"
+    environment:
+      - PUBLIC_KEY=${SSH_PUB_KEY:-}
+    volumes:
+      - ${HOME}/.ssh/id_ed25519.pub:/config/ssh-key.pub:ro
+      - ${HOME}/.ssh/id_rsa.pub:/config/ssh-key-rsa.pub:ro
+    networks:
+      - lab
+    restart: unless-stopped
+    depends_on:
+      - web-nginx
+      - db-mysql
+      - db-postgres
+
+networks:
+  lab:
+    driver: bridge
+
+volumes:
+  ssh_data:
+  mysql_data:
+  postgres_data:
