@@ -62,7 +62,7 @@ docker compose version
 
 | # | Escenario | Síntoma | Guía |
 |---|---|---|---|
-| 01 | Conexiones agotadas | `FATAL: sorry, too many clients already` | [DB/01](/learning-sys-admin-guides-web/scenarios/databases/01-postgres-connection-exhaustion/) |
+| 01 | Conexiones agotadas | La app no puede conectarse: slots reservados o `too many clients` | [DB/01](/learning-sys-admin-guides-web/scenarios/databases/01-postgres-connection-exhaustion/) |
 | 02 | Réplica retrasada o caída | Lecturas viejas y `pg_stat_replication` vacío | [DB/02](/learning-sys-admin-guides-web/scenarios/databases/02-postgres-replication-lag/) |
 | 03 | Bloqueos y deadlocks | Un `UPDATE` se queda esperando | [DB/03](/learning-sys-admin-guides-web/scenarios/databases/03-postgres-lock-contention/) |
 | 04 | Consulta lenta en MySQL | `EXPLAIN` muestra un full scan | [DB/04](/learning-sys-admin-guides-web/scenarios/databases/04-mysql-slow-query/) |
