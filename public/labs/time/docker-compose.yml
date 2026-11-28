@@ -1,0 +1,20 @@
+services:
+  ntp-server:
+    build: .
+    container_name: time-ntp-server
+    hostname: ntp-server
+    command: ["chronyd", "-d", "-x", "-f", "/etc/chrony/server.conf"]
+    networks:
+      - time-net
+
+  time-client:
+    build: .
+    container_name: time-client
+    hostname: time-client
+    command: ["chronyd", "-d", "-x", "-f", "/etc/chrony/client.conf"]
+    networks:
+      - time-net
+
+networks:
+  time-net:
+    driver: bridge
