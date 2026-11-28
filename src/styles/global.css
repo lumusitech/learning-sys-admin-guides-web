@@ -475,11 +475,17 @@ html[data-theme='dark'] .astro-code span {
   border-bottom: 0;
 }
 
-/* En móvil las tablas scrollean enteras: sin columna fija. La primera
-   columna suele tener prosa larga y `nowrap` dejaba el scroll reducido a
-   una franja mínima. El `thead` sigue sticky para el scroll vertical. */
+/* En móvil las tablas scrollean enteras: sin columna fija. La tabla larga
+   scrollea dentro de su caja y el header queda fijo arriba de la tabla (no
+   de la ventana), así la primera fila no queda tapada. */
 @media (max-width: 767px) {
+  .table-wrap {
+    max-height: 70vh;
+    overflow: auto;
+  }
+
   .prose thead th {
+    top: 0;
     white-space: normal;
   }
 }
