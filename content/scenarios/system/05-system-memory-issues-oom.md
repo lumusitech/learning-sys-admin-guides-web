@@ -156,7 +156,7 @@ systemctl restart <svc>             rc-service <svc> restart
 
 ### Swap file
 
-`fallocate` puede no estar disponible en Alpine. Usá la alternativa portable:
+`fallocate` puede no estar disponible en Alpine. Usa la alternativa portable:
 
 ```bash
 # Debian:                          # Alpine (portable):

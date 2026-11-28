@@ -352,7 +352,7 @@ curl -s -u admin:admin "http://10.0.100.108/cgi-bin/magicBox.cgi?action=getSyste
 # (reemplazar 192.168.100.x por 10.0.100.x en los scripts)
 ```
 
-**Ejercicio:** Ejecutá el script de backup y cambio de contraseña sobre las cámaras simuladas del lab.
+**Ejercicio:** Ejecuta el script de backup y cambio de contraseña sobre las cámaras simuladas del lab.
 
 Ver [laboratorio completo →](../../labs/docker-compose.dahua.yml)
 

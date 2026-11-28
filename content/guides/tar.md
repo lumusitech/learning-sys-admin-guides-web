@@ -45,7 +45,7 @@ tar **no comprime** por sí mismo — solo empaqueta. La compresión viene de co
 
 ## 🧠 Modelo mental
 
-Pensá en tar como una **caja de mudanza**. Metes archivos y carpetas adentro de la caja (empaquetar), y después puedes comprimir la caja con una bolsa al vacío (gzip/xz). Para ver qué hay adentro, abres la caja (extraer/ver contenido).
+Piensa en tar como una **caja de mudanza**. Metes archivos y carpetas adentro de la caja (empaquetar), y después puedes comprimir la caja con una bolsa al vacío (gzip/xz). Para ver qué hay adentro, abres la caja (extraer/ver contenido).
 
 tar preserva todo lo que el filesystem sabe del archivo: permisos, propietario, timestamps, estructura de directorios, y symlinks.
 

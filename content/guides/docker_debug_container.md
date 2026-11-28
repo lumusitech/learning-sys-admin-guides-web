@@ -63,7 +63,7 @@ sin flags          → el contenedor vive en una burbuja (no ve nada del host)
 - Lo que no se comparte, no existe dentro del contenedor.
 - `--rm` garantiza que al salir no queda ningún rastro.
 
-> Pensá en el contenedor como un pasante con credencial de visita: puede mirar todos los paneles del host (`--net=host --pid=host`) pero sin credencial de mantenimiento (`--privileged`) no puede tocar nada.
+> Piensa en el contenedor como un pasante con credencial de visita: puede mirar todos los paneles del host (`--net=host --pid=host`) pero sin credencial de mantenimiento (`--privileged`) no puede tocar nada.
 
 ---
 

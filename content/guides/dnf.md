@@ -67,7 +67,7 @@ repositorios remotos → dnf descarga → rpm instala → rpmdb registra
 - `dnf history` guarda cada transacción: puedes revertir cualquier instalación.
 - Los repos se declaran en archivos `.repo` en `/etc/yum.repos.d/`.
 
-> Pensá en dnf como el gerente de compras y en rpm como el almacenero que guarda cada caja y anota su contenido en el inventario (rpmdb).
+> Piensa en dnf como el gerente de compras y en rpm como el almacenero que guarda cada caja y anota su contenido en el inventario (rpmdb).
 
 ---
 

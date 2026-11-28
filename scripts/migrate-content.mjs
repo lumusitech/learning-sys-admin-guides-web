@@ -113,6 +113,12 @@ const ICON_RULES = [
   [/\bfase \d/i, '🗺️'],
   [/entrega final/i, '🎯'],
   [/script completo|\bscript\b/i, '📝'],
+  [/baseline/i, '📊'],
+  [/desv[ií]os?|detectar/i, '🔍'],
+  [/blast radius/i, '🧯'],
+  [/principios?/i, '🧭'],
+  [/\bcapas\b/i, '🧩'],
+  [/locking/i, '🔐'],
 
   // Categorías de sección (h2)
   [/\b(quick|comando rápido|comandos? rápidos?)\b/i, '⚡'],
@@ -187,14 +193,27 @@ const REPLACEMENTS = [
   ['llegás', 'llegas'], ['llevás', 'llevas'], ['cargás', 'cargas'], ['instalás', 'instalas'],
   ['configurás', 'configuras'], ['pensás', 'piensas'], ['venís', 'vienes'], ['salís', 'sales'],
   ['decís', 'dices'], ['buscás', 'buscas'], ['armás', 'armas'],
+  ['sabías', 'sabes'], ['cerrá', 'cierra'], ['cerrás', 'cierras'],
+  ['limitá', 'limita'], ['rechazá', 'rechaza'], ['fallá', 'falla'], ['mantené', 'mantén'],
+  ['corré', 'corre'], ['sacá', 'saca'],
 ];
 
 function replaceWord(text, from, to) {
-  return text.replace(new RegExp(`\\b${from}\\b`, 'gi'), (match) => {
+  return text.replace(new RegExp(`(?<![\\p{L}\\p{N}])${from}(?![\\p{L}\\p{N}])`, 'giu'), (match) => {
     if (match.length > 1 && match === match.toUpperCase()) return to.toUpperCase();
     if (match[0] === match[0].toUpperCase()) return to[0].toUpperCase() + to.slice(1);
     return to;
   });
+}
+
+function neutralLine(line, stats) {
+  let next = line;
+  for (const [from, to] of REPLACEMENTS) {
+    const before = next;
+    next = replaceWord(next, from, to);
+    if (next !== before) stats.language += 1;
+  }
+  return next;
 }
 
 function neutralSpanish(lines, stats) {
@@ -205,14 +224,7 @@ function neutralSpanish(lines, stats) {
       return line;
     }
     if (fence) return line;
-
-    let next = line;
-    for (const [from, to] of REPLACEMENTS) {
-      const before = next;
-      next = replaceWord(next, from, to);
-      if (next !== before) stats.language += 1;
-    }
-    return next;
+    return neutralLine(line, stats);
   });
 }
 
@@ -366,7 +378,8 @@ for (const file of files) {
 
   let newFront = front;
   if (titleMatch) {
-    newFront = front.replace(/^title:\s*"[^"]*"\s*$/m, `title: ${JSON.stringify(newTitle)}`);
+    const cleanTitle = neutralLine(newTitle, stats);
+    newFront = front.replace(/^title:\s*"[^"]*"\s*$/m, `title: ${JSON.stringify(cleanTitle)}`);
     const oldEmoji = titleEmoji;
     if (oldEmoji && !set.has(iconKey(oldEmoji))) stats.badIcon += 1;
   }

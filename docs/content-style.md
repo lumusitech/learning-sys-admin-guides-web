@@ -21,6 +21,7 @@ Reglas de idioma y redacción para las guías, el copy de UI y la documentación
 | usá, guardá, verificá, normalizá, copiá, pensá, tocá, agregá, quitá | usa, guarda, verifica, normaliza, copia, piensa, toca, agrega, quita |
 | mirá, contá, nombrá, tratá, documentá, ejecutá, buscá, evitá, filtrá | mira, cuenta, nombra, trata, documenta, ejecuta, busca, evita, filtra |
 | escribí, resolvé, reducí, pedí, capturá, aceptá, elevá | escribe, resuelve, reduce, pide, captura, acepta, eleva |
+| limitá, rechazá, fallá, mantené, corré, sacá | limita, rechaza, falla, mantén, corre, saca |
 | fijate, acordate, olvidate, quedate, dale, decime, contame | fíjate, acuérdate, olvídate, quédate, dime, cuéntame |
 | vos | tú (o se omite: el imperativo ya marca el sujeto) |
 
@@ -37,6 +38,8 @@ Reglas de idioma y redacción para las guías, el copy de UI y la documentación
 
 - `pnpm lint:language` recorre `content/`, `docs/` y `README.md` y falla si
   encuentra voseo o regionalismos. Corre en CI junto a `lint:icons`.
+- El lint usa límites Unicode: también detecta imperativos con vocal acentuada
+  (`limitá`, `cerrá`), no solo formas terminadas en consonante.
 - El lint ignora los bloques de código y este mismo documento (que cita las
   formas voseo como referencia).
 - Checklist antes de la PR:

@@ -73,7 +73,7 @@ files → base de datos de archivos remotos (pacman -F)
 - `-U` = meter un archivo directo al local.
 - Todo lo descargado queda en caché (`/var/cache/pacman/pkg/`), que además permite downgrades.
 
-> Pensá en pacman como un almacén con un catálogo (`sync`), un depósito con lo que compraste (`local`) y un registro de qué caja contiene cada pieza (`files`).
+> Piensa en pacman como un almacén con un catálogo (`sync`), un depósito con lo que compraste (`local`) y un registro de qué caja contiene cada pieza (`files`).
 
 ---
 

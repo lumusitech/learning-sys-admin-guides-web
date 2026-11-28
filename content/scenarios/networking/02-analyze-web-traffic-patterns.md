@@ -86,7 +86,7 @@ END { for(m in total) printf "%s %d %.1f%%\n", m, error[m], (error[m]/total[m])*
 | Tráfico fuera de horario (3am) | Investigar si es backup legítimo o ataque |
 | Una IP con >100 req/min | Rate limiting |
 
-⚠️ Verificá antes de bloquear: puedes estar bloqueando un monitor legítimo o un proxy CDN.
+⚠️ Verifica antes de bloquear: puedes estar bloqueando un monitor legítimo o un proxy CDN.
 
 ---
 

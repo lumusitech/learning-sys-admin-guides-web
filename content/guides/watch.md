@@ -60,7 +60,7 @@ Piensalo así:
 - `watch` → repite un comando que cambia su resultado
 - `cron` → ejecuta algo periódicamente en segundo plano
 
-`watch` es para monitoreo interactivo. Si necesitas ejecutar algo periódicamente en segundo plano, usá `cron`.
+`watch` es para monitoreo interactivo. Si necesitas ejecutar algo periódicamente en segundo plano, usa `cron`.
 
 ---
 

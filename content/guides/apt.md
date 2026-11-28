@@ -68,7 +68,7 @@ repositorios remotos → apt download → /var/cache/apt/archives/ → dpkg -i �
 - dpkg registra todo en `/var/lib/dpkg/status` (estado de cada paquete, checksums incluidos).
 - El sistema "no se rompe" si los índices están desactualizados, pero `apt` no encuentra paquetes nuevos hasta hacer `apt update`.
 
-> Pensá en apt como un proveedor que trae la mercadería y en dpkg como el estante donde se guarda cada caja con su inventario.
+> Piensa en apt como un proveedor que trae la mercadería y en dpkg como el estante donde se guarda cada caja con su inventario.
 
 ---
 

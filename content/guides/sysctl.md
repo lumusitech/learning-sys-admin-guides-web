@@ -26,7 +26,7 @@ meta:
 `sysctl net.ipv4.ip_forward`
 
 :::callout{state=warning label="Atención"}
-Cambiar en caliente no sobrevive un reinicio. Para persistir, escribí en `/etc/sysctl.d/` y aplicá con `sysctl --system`.
+Cambiar en caliente no sobrevive un reinicio. Para persistir, escribe en `/etc/sysctl.d/` y aplicá con `sysctl --system`.
 :::
 
 ---
@@ -183,7 +183,7 @@ Errores frecuentes:
 | `--deprecated` | Incluye parámetros obsoletos | Inventario completo |
 
 :::callout{state=warning label="Atención"}
-**Compatibilidad**: en Alpine/BusyBox están disponibles `-a`, `-w`, `-p`, `-n`, `-e` y `-q`. `--system`, `-r`, `--dry-run`, `-N` y `--deprecated` son de `procps-ng` (Debian/Ubuntu/RHEL) y no existen en BusyBox. Verificá con `busybox sysctl --help`.
+**Compatibilidad**: en Alpine/BusyBox están disponibles `-a`, `-w`, `-p`, `-n`, `-e` y `-q`. `--system`, `-r`, `--dry-run`, `-N` y `--deprecated` son de `procps-ng` (Debian/Ubuntu/RHEL) y no existen en BusyBox. Verifica con `busybox sysctl --help`.
 :::
 
 ### Orden de carga de los archivos
@@ -491,11 +491,11 @@ sysctl -w vm.swappiness=10
 # tras el reinicio: vuelve a 60
 ```
 
-Siempre escribí el valor en `/etc/sysctl.d/` si quieres que sobreviva.
+Siempre escribe el valor en `/etc/sysctl.d/` si quieres que sobreviva.
 
 ### 2. Nombres de archivo sin orden
 
-`tuning.conf` y `zz-tuning.conf` se aplican en orden distinto. Usá prefijo numérico (`99-`) para controlar la prioridad.
+`tuning.conf` y `zz-tuning.conf` se aplican en orden distinto. Usa prefijo numérico (`99-`) para controlar la prioridad.
 
 ### 3. Valores con espacios sin comillas
 
@@ -506,7 +506,7 @@ sysctl -w "net.ipv4.ip_local_port_range=1024 65535" # correcto
 
 ### 4. Confundir `sysctl -p` con `--system`
 
-`sysctl -p` aplica solo `/etc/sysctl.conf` (o el archivo indicado). `--system` recorre todos los directorios. En Alpine, `--system` no existe: usá el servicio o `-p` por archivo.
+`sysctl -p` aplica solo `/etc/sysctl.conf` (o el archivo indicado). `--system` recorre todos los directorios. En Alpine, `--system` no existe: usa el servicio o `-p` por archivo.
 
 ### 5. Esperar que el cambio aplique a conexiones existentes
 
@@ -533,14 +533,14 @@ Un `cannot stat` en una clave obsoleta no detiene la aplicación del resto. Revi
 ## ✅ Buenas prácticas
 
 - **Un archivo por tema**, con prefijo numérico: `99-network.conf`, `99-memory.conf`, `99-security.conf`.
-- **Documentá el motivo** en un comentario dentro del archivo: qué problema resuelve y qué valor había antes.
+- **Documenta el motivo** en un comentario dentro del archivo: qué problema resuelve y qué valor había antes.
 - **Cambiá en caliente para probar, persistí después de medir.** No al revés.
-- **Guardá el valor original** antes de tocar cualquier parámetro.
+- **Guarda el valor original** antes de tocar cualquier parámetro.
 - **Aplicá con `sysctl -p <archivo>`** cuando pruebas un archivo nuevo, y `--system` cuando ya está en su lugar.
-- **Usá `-e`** en configs que deben funcionar en kernels distintos (parámetros que pueden no existir).
+- **Usa `-e`** en configs que deben funcionar en kernels distintos (parámetros que pueden no existir).
 - **Compará con baseline** antes y después: `sysctl -a | sort` + `diff`.
 - **No toques `vm.overcommit_memory`, `kernel.panic` ni `rp_filter` global** sin una razón concreta y un plan de rollback.
-- **Verificá el efecto real** con la herramienta del dominio: `ss` para red, `vmstat` para memoria, `dmesg` para descartes.
+- **Verifica el efecto real** con la herramienta del dominio: `ss` para red, `vmstat` para memoria, `dmesg` para descartes.
 
 ---
 

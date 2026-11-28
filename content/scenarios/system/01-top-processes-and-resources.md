@@ -240,9 +240,9 @@ ps aux | awk '$7 == "?" { print $11, $2 }'
 
 ### Ejercicio 1
 
-1. Ejecutá el quick run y reportá el top 3 por CPU.
+1. Ejecuta el quick run y reportá el top 3 por CPU.
 2. Identificá si algún proceso tiene >80% y explicá qué harías.
-3. Verificá si hay procesos zombie.
+3. Verifica si hay procesos zombie.
 
 ### Ejercicio 2
 

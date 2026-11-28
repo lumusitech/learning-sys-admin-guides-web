@@ -14,6 +14,7 @@ meta:
       - id: "scenarios/infrastructure/10-backup-restore-drill"
         label: "infrastructure/10-backup-restore-drill"
 ---
+
 # 🔀 diff — Guía completa de comparación de archivos
 
 ---
@@ -186,7 +187,7 @@ $ diff -q /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 Files /etc/nginx/nginx.conf and /etc/nginx/nginx.conf.bak differ
 $
 ```
-**No es un fallo**: `diff` usa el exit code 1 para decir "hay diferencias". El mensaje va a stdout y nombra los dos archivos. En scripts con `set -e` esto aborta la ejecución, así que tratalo explícitamente (`diff ... || true`, o capturá `$?`).
+**No es un fallo**: `diff` usa el exit code 1 para decir "hay diferencias". El mensaje va a stdout y nombra los dos archivos. En scripts con `set -e` esto aborta la ejecución, así que tratalo explícitamente (`diff ... || true`, o captura `$?`).
 :::
 
 ---
@@ -454,7 +455,7 @@ diff -u /tmp/web01.txt /tmp/web02.txt
 ```
 
 :::callout{state=warning label="Portabilidad"}
-`--label` es GNU/BSD: en Alpine/BusyBox no existe. Para parches portables, quita las dos primeras líneas del parche con `sed '1,2d'` o aceptá cabeceras con fecha.
+`--label` es GNU/BSD: en Alpine/BusyBox no existe. Para parches portables, quita las dos primeras líneas del parche con `sed '1,2d'` o acepta cabeceras con fecha.
 :::
 
 ---
@@ -524,7 +525,7 @@ Cuenta los componentes de la ruta en la cabecera: `a/nginx.conf` → `-p1`; `ngi
 
 ### 🔀 7. Confiar en el orden de líneas
 
-`diff` compara por posición. Si el archivo se regeneró con las líneas en otro orden, todo aparece como cambiado. Normalizá con `sort` antes de comparar listas.
+`diff` compara por posición. Si el archivo se regeneró con las líneas en otro orden, todo aparece como cambiado. Normaliza con `sort` antes de comparar listas.
 
 ### 🚫 8. Ignorar el exit code 2
 

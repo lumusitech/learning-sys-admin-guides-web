@@ -55,7 +55,7 @@ kubectl es la herramienta de línea de comandos para interactuar con clusters Ku
 
 kubectl es el **visor de instrumentos del cluster**.
 
-Pensá en kubectl como `systemctl` pero para un cluster distribuido:
+Piensa en kubectl como `systemctl` pero para un cluster distribuido:
 
 - `kubectl get nodes` = `systemctl status` de todos los servidores
 - `kubectl get pods` = `ps aux` de todos los contenedores

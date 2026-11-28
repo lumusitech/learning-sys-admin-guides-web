@@ -6,6 +6,7 @@ meta:
   - label: "Herramientas"
     value: "`nmap`, `arp-scan`, `curl`, `dnsmasq`"
 ---
+
 # 🔍 Dahua — Descubrir dispositivos en la red
 
 ---
