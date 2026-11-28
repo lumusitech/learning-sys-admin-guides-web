@@ -430,6 +430,10 @@ html[data-theme='dark'] .astro-code span {
   margin-block: 1.5rem;
   max-width: 100%;
   overflow-x: auto;
+  /* `overflow-x: auto` convertiría el wrapper en scroll container vertical y
+     rompería el `thead` sticky (se anclaría al wrapper, no a la página).
+     `clip` mantiene el scroll horizontal sin crear ese contenedor. */
+  overflow-y: clip;
   border: 1px solid var(--c-line);
   border-radius: 10px;
   -webkit-overflow-scrolling: touch;
@@ -444,7 +448,7 @@ html[data-theme='dark'] .astro-code span {
 
 .prose thead th {
   position: sticky;
-  top: 0;
+  top: 3.5rem; /* debajo de la topbar (h-14) */
   z-index: 1;
   background-color: var(--c-surface-2);
   text-align: left;
