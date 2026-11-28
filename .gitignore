@@ -15,3 +15,7 @@ playwright-report/
 test-results/
 
 public/labs/identity/keys/
+
+public/labs/iac/terraform/.terraform/
+public/labs/iac/terraform/*.tfstate
+public/labs/iac/terraform/*.tfstate.*
