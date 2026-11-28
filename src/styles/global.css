@@ -471,22 +471,12 @@ html[data-theme='dark'] .astro-code span {
   border-bottom: 0;
 }
 
-/* Primera columna sticky: en móvil mantiene el identificador visible */
+/* En móvil las tablas scrollean enteras: sin columna fija. La primera
+   columna suele tener prosa larga y `nowrap` dejaba el scroll reducido a
+   una franja mínima. El `thead` sigue sticky para el scroll vertical. */
 @media (max-width: 767px) {
-  .prose thead th:first-child,
-  .prose tbody td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background-color: var(--c-bg);
-    border-right: 1px solid var(--c-line);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .prose thead th:first-child {
-    background-color: var(--c-surface-2);
-    z-index: 3;
+  .prose thead th {
+    white-space: normal;
   }
 }
 
