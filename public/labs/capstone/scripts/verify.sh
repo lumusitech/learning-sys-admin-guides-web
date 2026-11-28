@@ -4,14 +4,51 @@ source "$(dirname "$0")/lib.sh"
 
 failed=0
 
+fail() {
+  echo "FALLO: $*"
+  failed=1
+}
+
 check() {
   local lab="$1"
   echo "== $lab =="
   if ( cd "$LABS/$lab" && ./scripts/verify.sh ); then
     echo "OK: $lab"
   else
-    echo "FALLO: $lab"
-    failed=1
+    fail "$lab"
+  fi
+}
+
+check_email_real() {
+  echo "== email (cola y login) =="
+  if ! ( cd "$LABS/email" && ./scripts/imap.sh alice alice ) | grep -q 'SEARCH'; then
+    fail "email: IMAP no autentica"
+    return
+  fi
+  if ! docker compose -f "$LABS/email/docker-compose.yml" exec -T mail mailq \
+      | grep -q 'Mail queue is empty'; then
+    fail "email: la cola no está vacía"
+    return
+  fi
+  echo "OK: email"
+}
+
+check_time_real() {
+  echo "== time (sincronización) =="
+  if docker compose -f "$LABS/time/docker-compose.yml" exec -T time-client chronyc tracking \
+      | grep -q 'Leap status.*Normal'; then
+    echo "OK: time"
+  else
+    fail "time: cliente sin sincronizar"
+  fi
+}
+
+check_iac_real() {
+  echo "== iac (plan sin drift) =="
+  if ( cd "$LABS/iac/terraform" && terraform plan -detailed-exitcode -input=false >/dev/null 2>&1 ); then
+    echo "OK: iac"
+  else
+    fail "iac: hay drift o el plan falla"
   fi
 }
 
@@ -20,6 +57,10 @@ check identity
 check time
 check iac
 check db
+
+check_email_real
+check_time_real
+check_iac_real
 
 if kind_ok; then
   check k8s
