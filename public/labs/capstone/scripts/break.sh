@@ -20,7 +20,9 @@ break_iac_k8s() {
   echo "== Fase 3: infraestructura y entrega =="
   run_lab iac break.sh 01
   if kind_ok; then
-    run_lab k8s break.sh 04
+    echo "Service web con selector incorrecto..."
+    kubectl -n k8s-lab patch svc web --type=merge       -p '{"spec":{"selector":{"app":"web-wrong"}}}' >/dev/null
+    kubectl -n k8s-lab get endpoints web
   else
     echo "kind no está presente: se omite el fallo de Kubernetes."
   fi

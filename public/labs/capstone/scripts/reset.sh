@@ -23,6 +23,7 @@ run_lab db setup.sh
 if kind_ok; then
   echo "== Restaurando Kubernetes =="
   run_lab k8s reset.sh
+  kubectl -n k8s-lab patch svc web --type=merge     -p '{"spec":{"selector":{"app":"web"}}}' >/dev/null 2>&1 || true
 else
   echo "kind no está presente: se omite Kubernetes."
 fi

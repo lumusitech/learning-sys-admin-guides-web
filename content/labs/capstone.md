@@ -144,6 +144,7 @@ Si quieres incluir Kubernetes:
 
 - Es un entorno local y desechable; no lo expongas a Internet.
 - Kubernetes y boot recovery son opcionales; el capstone funciona con los labs Docker.
+- La fase K8s parchea el selector del Service `web` y verifica sus endpoints; no necesita ingress. Para el laboratorio completo de ingress/TLS, libera los puertos 8080 y 8443.
 - Los fallos son independientes a propósito: no busques una sola causa.
 - Si algo tarda, usa `status.sh` para ver qué está arriba antes de reiniciar.
 

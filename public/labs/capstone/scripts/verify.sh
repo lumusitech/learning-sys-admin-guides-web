@@ -43,6 +43,17 @@ check_time_real() {
   fi
 }
 
+check_k8s_real() {
+  echo "== k8s (endpoints de web) =="
+  local eps
+  eps="$(kubectl -n k8s-lab get endpointslice     -l kubernetes.io/service-name=web     -o jsonpath='{range .items[*]}{.endpoints[*].addresses[*]}{end}' 2>/dev/null || true)"
+  if [ -n "$eps" ]; then
+    echo "OK: k8s"
+  else
+    fail "k8s: el Service web no tiene endpoints"
+  fi
+}
+
 check_iac_real() {
   echo "== iac (plan sin drift) =="
   if ( cd "$LABS/iac/terraform" && terraform plan -detailed-exitcode -input=false >/dev/null 2>&1 ); then
@@ -64,6 +75,7 @@ check_iac_real
 
 if kind_ok; then
   check k8s
+  check_k8s_real
 else
   echo "== k8s =="
   echo "omitido: kind no está presente"

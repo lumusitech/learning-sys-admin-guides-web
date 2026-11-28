@@ -230,13 +230,20 @@ Si el plan falla por state, restaura `terraform.tfstate.valid` antes de aplicar.
 
 ```bash
 kubectl -n k8s-lab get pods,svc,endpoints
-kubectl -n k8s-lab describe svc web-broken
+kubectl -n k8s-lab describe svc web
 ```
 
-Si el selector no coincide con las etiquetas de los pods, corrige el Service o elimina el manifiesto roto:
+El capstone parchea el selector del Service `web` para que no coincida con las etiquetas de los pods. Diagnostica:
 
 ```bash
-kubectl -n k8s-lab delete -f manifests/broken/04-service-selector.yaml
+kubectl -n k8s-lab get endpoints web
+kubectl -n k8s-lab get pods --show-labels
+```
+
+Corrige el selector:
+
+```bash
+kubectl -n k8s-lab patch svc web --type=merge   -p '{"spec":{"selector":{"app":"web"}}}'
 kubectl -n k8s-lab get endpoints web
 ```
 
