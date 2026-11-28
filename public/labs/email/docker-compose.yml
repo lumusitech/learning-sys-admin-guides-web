@@ -1,0 +1,9 @@
+services:
+  mail:
+    build: .
+    container_name: mail-lab
+    hostname: mail.lab.local
+    ports:
+      - "2525:25"
+      - "1143:143"
+    restart: unless-stopped
