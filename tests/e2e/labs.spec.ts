@@ -18,3 +18,12 @@ test('una guía enlaza al asset de labs con la base del sitio', async ({ page })
   const link = page.locator('a[href$="/labs/docker-compose.docker.yml"]').first();
   await expect(link).toHaveAttribute('href', `${SITE_BASE}/labs/docker-compose.docker.yml`);
 });
+
+test('el laboratorio de bases de datos publica su compose', async ({ request }) => {
+  const response = await request.get(`${SITE_BASE}/labs/db/docker-compose.yml`);
+
+  expect(response.status()).toBe(200);
+  const body = await response.text();
+  expect(body).toContain('postgres-primary');
+  expect(body).toContain('redis');
+});

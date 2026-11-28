@@ -1,0 +1,127 @@
+name: sysadmin-db-lab
+
+services:
+  postgres-primary:
+    image: postgres:16-alpine
+    container_name: db-lab-postgres-primary
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    command:
+      - postgres
+      - -c
+      - wal_level=replica
+      - -c
+      - max_wal_senders=10
+      - -c
+      - hot_standby=on
+      - -c
+      - max_connections=20
+      - -c
+      - superuser_reserved_connections=3
+    ports:
+      - "55432:5432"
+    volumes:
+      - pg_primary_data:/var/lib/postgresql/data
+      - ./postgres/primary:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - db-lab
+
+  postgres-replica:
+    image: postgres:16-alpine
+    container_name: db-lab-postgres-replica
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+      PGPASSWORD: replicator
+    entrypoint: ["/bin/bash", "/bootstrap.sh"]
+    command:
+      - postgres
+      - -c
+      - hot_standby=on
+      - -c
+      - max_connections=20
+      - -c
+      - superuser_reserved_connections=3
+    ports:
+      - "55433:5432"
+    volumes:
+      - pg_replica_data:/var/lib/postgresql/data
+      - ./postgres/replica/bootstrap.sh:/bootstrap.sh:ro
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+    networks:
+      - db-lab
+
+  mysql:
+    image: mysql:8.4
+    container_name: db-lab-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+    command:
+      - --slow_query_log=1
+      - --long_query_time=0.05
+      - --slow_query_log_file=/var/lib/mysql/slow.log
+      - --performance_schema=ON
+    ports:
+      - "53306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/01-init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=app mysqladmin ping -h 127.0.0.1 -uapp --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - db-lab
+
+  redis:
+    image: redis:7-alpine
+    container_name: db-lab-redis
+    restart: unless-stopped
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    ports:
+      - "56379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks:
+      - db-lab
+
+volumes:
+  pg_primary_data:
+  pg_replica_data:
+  mysql_data:
+  redis_data:
+
+networks:
+  db-lab:
+    driver: bridge
