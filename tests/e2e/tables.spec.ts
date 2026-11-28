@@ -2,44 +2,33 @@ import { expect, test } from '@playwright/test';
 import { SITE_BASE } from '../../src/lib/site.mjs';
 
 /**
- * Regresión de tablas en móvil:
- * - la primera columna no queda fija ni fuerza `nowrap`;
- * - el header sticky no tapa la primera fila (la tabla larga scrollea dentro
- *   de su caja, con el header fijo arriba de la tabla).
+ * En móvil las tablas solo scrollean horizontalmente. Sin header sticky ni
+ * scroll vertical interno: la página conserva su scroll normal y el header
+ * se va con la tabla. Esto evita el efecto inconsistente (solo en tablas
+ * largas) y el scroll anidado que secuestraba el gesto vertical.
  */
-test('en móvil la primera columna no queda fija y el header no tapa la primera fila', async ({ page }) => {
+test('en móvil las tablas no tienen header sticky ni scroll vertical interno', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${SITE_BASE}/concepts/idempotency/`);
 
   const firstCell = page.locator('.prose table tbody td:first-child').first();
   const headerCell = page.locator('.prose table thead th').first();
-  const firstRow = page.locator('.prose table tbody tr').first();
   const wrapper = page.locator('.table-wrap').first();
 
   await expect(firstCell).toHaveCSS('position', 'static');
   await expect(firstCell).toHaveCSS('white-space', 'normal');
-  await expect(headerCell).toHaveCSS('position', 'sticky');
-  await expect(wrapper).toHaveCSS('overflow-y', 'auto');
-
-  // Con la tabla corta no hay scroll interno; el header no se superpone.
-  const tableTop = await page
-    .locator('.prose table')
-    .first()
-    .evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
-  await page.evaluate((top) => window.scrollTo(0, top), tableTop);
-
-  const headerBox = await headerCell.boundingBox();
-  const rowBox = await firstRow.boundingBox();
-  expect((headerBox?.y ?? 0) + (headerBox?.height ?? 0)).toBeLessThanOrEqual((rowBox?.y ?? 0) + 1);
+  await expect(headerCell).toHaveCSS('position', 'static');
+  await expect(wrapper).toHaveCSS('overflow-x', 'auto');
+  await expect(wrapper).toHaveCSS('max-height', 'none');
 });
 
-test('en móvil una tabla larga scrollea dentro de su caja', async ({ page }) => {
+test('en móvil una tabla larga tampoco atrapa el scroll vertical', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${SITE_BASE}/concepts/linux-fhs/`);
 
-  const scrollable = await page
+  const anyMaxHeight = await page
     .locator('.table-wrap')
-    .evaluateAll((wrappers) => wrappers.some((el) => el.scrollHeight > el.clientHeight + 1));
+    .evaluateAll((wrappers) => wrappers.some((el) => getComputedStyle(el).maxHeight !== 'none'));
 
-  expect(scrollable).toBe(true);
+  expect(anyMaxHeight).toBe(false);
 });
