@@ -1,10 +1,10 @@
 ---
-title: "⚙️ opción preferida: reiniciar el servicio padre"
+title: "⚙️ Escenario: Procesos zombie (defunct) en Linux"
 section: "scenarios"
 level: "Intermedio"
 ---
 
- Escenario: Procesos zombie (defunct) en Linux
+# ⚙️ Escenario: Procesos zombie (defunct) en Linux
 
 ---
 

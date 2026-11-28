@@ -59,6 +59,26 @@ function splitFrontmatter(raw) {
   };
 }
 
+/** Primer H1 del cuerpo, ignorando bloques de código. */
+function firstHeading(body) {
+  let fence = false;
+  for (const line of body.split(/\r?\n/)) {
+    if (/^\s*```/.test(line)) {
+      fence = !fence;
+      continue;
+    }
+    if (fence) continue;
+    const match = line.match(/^#\s+(.+)$/);
+    if (match) return match[1].trim();
+  }
+  return null;
+}
+
+/** Quita el icono inicial para comparar título y H1. */
+function stripIcon(value) {
+  return value.replace(/^\p{Extended_Pictographic}[^\p{L}\p{N}]*\s*/u, '').trim();
+}
+
 function field(yaml, name) {
   const match = yaml.match(
     new RegExp(`^${name}:\\s*(?:"([^"]*)"|'([^']*)'|(\\S+))\\s*$`, 'm'),
@@ -135,9 +155,16 @@ function reportMissing(where, target) {
 for (const doc of docs) {
   const section = field(doc.yaml, 'section');
   const level = field(doc.yaml, 'level');
+  const title = field(doc.yaml, 'title');
 
-  if (!field(doc.yaml, 'title')) fail(`${doc.file}: falta "title" en el frontmatter.`);
+  if (!title) fail(`${doc.file}: falta "title" en el frontmatter.`);
   if (!section) fail(`${doc.file}: falta "section" en el frontmatter.`);
+
+  const h1 = firstHeading(doc.body);
+  if (!h1) fail(`${doc.file}: falta el H1 (# ...) en el cuerpo.`);
+  else if (title && stripIcon(h1) !== stripIcon(title)) {
+    fail(`${doc.file}: el H1 no coincide con el title ("${h1}" vs "${title}").`);
+  }
 
   if (section && !SECTIONS.includes(section)) {
     fail(`${doc.file}: section "${section}" fuera de la allowlist (${SECTIONS.join(', ')}).`);
