@@ -40,14 +40,14 @@ unlock_time = 600
 fail_interval = 900
 EOF
 
-if command -v pam-auth-update >/dev/null 2>&1; then
-  pam-auth-update --enable faillock >/dev/null 2>&1 || true
-fi
-
-# Si el perfil no existe, activa faillock manualmente en common-auth.
-if ! grep -q pam_faillock /etc/pam.d/common-auth; then
-  sed -i '1i auth    required    pam_faillock.so preauth' /etc/pam.d/common-auth
-  sed -i '/^auth.*pam_unix.so/i auth    [default=die] pam_faillock.so authfail' /etc/pam.d/common-auth
-fi
+# Debian 12 no trae perfil pam-auth-update para faillock; se configura
+# explícitamente. success=2 salta authfail y pam_deny cuando pam_unix acierta.
+cat > /etc/pam.d/common-auth <<'PAMEOF'
+auth    required        pam_faillock.so preauth
+auth    [success=2 default=ignore] pam_unix.so nullok
+auth    [default=die]   pam_faillock.so authfail
+auth    requisite       pam_deny.so
+auth    required        pam_permit.so
+PAMEOF
 
 exec /usr/sbin/sshd -D -e
