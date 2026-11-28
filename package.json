@@ -20,6 +20,7 @@
     "search:index": "node scripts/build-search-index.mjs",
     "content": "node scripts/prepare-content.mjs",
     "sync": "node scripts/sync-content.mjs",
+    "migrate:content": "node scripts/migrate-content.mjs",
     "new:guide": "node scripts/new-guide.mjs",
     "verify": "pnpm lint:icons && pnpm lint:language && pnpm check && pnpm build && pnpm lint:content && pnpm test && pnpm test:e2e"
   },

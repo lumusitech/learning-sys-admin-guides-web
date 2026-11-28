@@ -45,6 +45,7 @@ scripts/                 Lints y utilidades de contenido (Node, .mjs)
   lint-language.mjs      Español neutro (sin voseo)
   lint-content.mjs       Frontmatter, links internos y anclas
   new-guide.mjs          Scaffolder de documentos
+  migrate-content.mjs    Migra iconos, idioma, índices y callouts
   sync-allowlist.mjs     Regenera pending-sync.json desde el repo upstream
   sync-content.mjs       Clona/usa upstream y sincroniza todo en un paso
   build-search-index.mjs Genera public/search-index.json
@@ -113,11 +114,22 @@ al repo origen— distinga un link pendiente de un typo. El workflow
 > títulos, español neutro y cabeceras a `meta`). `pnpm sync` copia, pero el
 > contenido se revisa y adapta antes de commitear.
 
+### Migración por sección
+
+Tras importar una sección, `pnpm migrate:content --section=<sección>` aplica:
+
+- icono a `h1`/`h2` y al `title:` del frontmatter (con reglas por palabra clave);
+- español neutro según `docs/content-style.md`;
+- eliminación del índice manual `## 📑 Índice` (el índice vive en la topbar);
+- `> ⚠️ ...` → `:::callout{state=warning}`.
+
+Es una primera pasada determinista: revisa el diff y corre `pnpm verify`.
+
 ## Lints y verificación
 
 | Comando | Qué valida |
 |---|---|
-| `pnpm lint:icons` | Todo título y `title:` empieza por un icono del set |
+| `pnpm lint:icons` | Título de página y `h2` con icono del set (h3+ opcional) |
 | `pnpm lint:language` | Español neutro (sin voseo ni regionalismos) |
 | `pnpm lint:content` | Frontmatter, links internos, anclas y allowlist de sync |
 | `pnpm check` | Tipos (Astro + TS strict) |

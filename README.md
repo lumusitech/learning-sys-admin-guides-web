@@ -28,6 +28,7 @@ pnpm test:e2e       # e2e + accesibilidad + presupuestos
 pnpm verify         # toda la cadena
 pnpm new:guide <section> <slug>  # scaffold de un documento
 pnpm sync           # sincroniza contenido + allowlist desde upstream
+pnpm migrate:content --section=guides  # migra una sección importada
 pnpm sync:allowlist <sourceDir>  # refresca el allowlist de ids upstream
 ```
 

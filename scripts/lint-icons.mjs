@@ -3,10 +3,12 @@
  * Lint de coherencia de iconos.
  *
  * Verifica que:
- *  - todo título (h1-h6 fuera de bloques de código) empiece con un icono del set;
+ *  - el título de página (`h1`) y los `h2` empiecen con un icono del set;
  *  - el `title:` del frontmatter también;
  *  - el icono pertenezca al set canónico definido en docs/icon-system.md;
  *  - haya un espacio entre el icono y el texto.
+ *
+ * `h3` y niveles inferiores son opcionales: se permiten con o sin icono.
  *
  * Fuente única de verdad: el bloque `<!-- icon-set:start/end -->`; el set se
  * comparte con `scripts/new-guide.mjs` vía `scripts/lib/icon-set.mjs`.
@@ -75,7 +77,9 @@ for (const file of markdownFiles(CONTENT)) {
     if (inFence) return;
 
     const heading = line.match(/^(#{1,6})\s+(.*)$/);
-    if (heading) checkHeading(file, index + 1, heading[2], iconSet);
+    if (!heading) return;
+    if (heading[1].length > 2) return; // h3+ opcional
+    checkHeading(file, index + 1, heading[2], iconSet);
   });
 }
 
