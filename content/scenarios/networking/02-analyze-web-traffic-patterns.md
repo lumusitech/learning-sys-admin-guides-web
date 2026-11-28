@@ -1,0 +1,144 @@
+---
+title: "🧩 Escenario: Analizar patrones de tráfico web"
+level: "Básico"
+section: "scenarios"
+meta:
+  - label: "Dominio"
+    value: "networking"
+  - label: "Herramientas"
+    value: "`awk`, `grep`, `sort`, `uniq`, `head`, `cut`"
+  - label: "Archivos"
+    value: "`labs/nginx_access.log`"
+---
+
+# 🧩 Escenario: Analizar patrones de tráfico web
+
+---
+
+## ⚡ Quick command (SRE)
+
+`awk '{print $7}' labs/nginx_access.log | sort | uniq -c | sort -rn | head -10`
+
+---
+
+## 🎯 Problema
+
+Se observa tráfico web irregular en los logs del servidor HTTP, lo que puede indicar comportamiento anómalo o potenciales ataques. Es necesario analizar estos registros para:
+
+- extraer las rutas más solicitadas y los códigos de estado HTTP
+- detectar crawlers, escaneo de rutas y fuentes de tráfico anómalo
+- reportar IPs con comportamiento sospechoso
+
+---
+
+## ✅ Salida esperada
+
+```text
+150 /index.html
+ 89 /api/usuarios
+ 45 /productos/123
+```
+
+Interpretación:
+
+- una ruta con muchas requests → tráfico normal o endpoint principal
+- múltiples rutas con 404 → escaneo de directorios
+- intentos a rutas sensibles (/admin, /wp-admin) → posible ataque
+
+---
+
+## 🛠️ Validación extendida
+
+### Códigos de estado HTTP
+
+```bash
+awk '{ print $9 }' labs/nginx_access.log | sort | uniq -c | sort -rn \
+| awk '{ if($2 ~ /^2/)c="2xx - Éxito"; else if($2 ~ /^3/)c="3xx - Redirección"; else if($2 ~ /^4/)c="4xx - Error cliente"; else if($2 ~ /^5/)c="5xx - Error servidor"; else c="Otro"; print $1, $2, c }'
+```
+
+### Peticiones por hora
+
+```bash
+awk '{ split($4,t,"[/:]"); h=t[4]; horas[h]++ } END { for(h in horas) printf "%02d:00 %d\n", h, horas[h] }' labs/nginx_access.log | sort
+```
+
+### Detectar escaneo de rutas (404 desde misma IP)
+
+```bash
+awk '$9==404{print $1,$7}' labs/nginx_access.log | sort | uniq -c | sort -rn | awk '$1>3{print $2,$3,$1}' | head -20
+```
+
+### Tasa de errores por minuto
+
+```bash
+awk '{ split($4,t,"[/:]"); m=t[4]":"t[5]; total[m]++; if($9~/^[45]/) error[m]++ }
+END { for(m in total) printf "%s %d %.1f%%\n", m, error[m], (error[m]/total[m])*100 }' labs/nginx_access.log | sort | head -20
+```
+
+---
+
+## 🧯 Mitigación
+
+| Señal | Acción |
+|-------|--------|
+| Una IP con 404 masivos | Bloquear IP temporalmente |
+| Crawler sin respetar robots.txt | Rate limiting o bloquear User-Agent |
+| Tráfico fuera de horario (3am) | Investigar si es backup legítimo o ataque |
+| Una IP con >100 req/min | Rate limiting |
+
+⚠️ Verificá antes de bloquear: puedes estar bloqueando un monitor legítimo o un proxy CDN.
+
+---
+
+## ✅ Prevención
+
+- [ ] Configurar rate limiting por IP en nginx (`limit_req_zone`)
+- [ ] Bloquear User-Agents maliciosos conocidos
+- [ ] Monitorear picos anómalos con alertas
+- [ ] Usar CDN/WAF (Cloudflare, AWS Shield)
+
+---
+
+## 🧪 Variantes
+
+### En tiempo real (ataque activo)
+
+```bash
+tail -f /var/log/nginx/access.log | awk '{ print $1, $7 }'
+```
+
+### Por ventana de 5 minutos
+
+```bash
+awk '{ split($4,t,"[/:]"); m=t[4]":"int(t[5]/5)*5; req[m]++ } END { for(m in req) print m, req[m] }' labs/nginx_access.log | sort | head -20
+```
+
+---
+
+## 🎓 Modo docente
+
+**Preguntas:** ¿Qué diferencia hay entre 200 y 304? ¿Cómo identificás un crawler legítimo de uno malicioso?
+**Ejercicio:** Encontrar IPs que piden rutas que no existen y clasificar la severidad.
+**Evaluación:** pipeline correcto, interpretación acertada, mitigación justificada.
+
+---
+
+## 🧪 Cómo practicarlo en el lab
+
+```bash
+cd labs && docker compose up -d web-nginx
+# Simular tráfico y escaneo
+curl -s localhost:8080/ && curl -s localhost:8080/admin && curl -s localhost:8080/backup.zip
+# Ver logs en tiempo real
+docker logs web-nginx 2>&1 | tail -10
+```
+
+
+---
+
+## 🔗 Referencias
+
+- [`guides/awk.md`](/learning-sys-admin-guides-web/guides/awk/) — arrays asociativos
+- [`guides/grep.md`](/learning-sys-admin-guides-web/guides/grep/) — filtrado con `-iE`
+- [`guides/sort.md`](/learning-sys-admin-guides-web/guides/sort/) + [`guides/uniq.md`](/learning-sys-admin-guides-web/guides/uniq/) — conteo de frecuencias
+- [`guides/nginx.md`](/learning-sys-admin-guides-web/guides/nginx/) — rate limiting y logs
