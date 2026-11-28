@@ -7,7 +7,7 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Levantando el laboratorio (PostgreSQL primario y réplica, MySQL y Redis)..."
+echo "Levantando el laboratorio (PostgreSQL primario y réplica, MySQL, Redis y MongoDB)..."
 docker compose up -d --wait
 
 echo "Esperando los datos base de PostgreSQL..."
@@ -23,6 +23,9 @@ done
 # volumen; el setup lo vuelve a crear.
 docker compose exec -T postgres-primary \
   pg_dump -U app -d app -Fc -t orders -f /tmp/app.dump
+
+echo "Inicializando el replica set de MongoDB..."
+docker compose --profile init run --rm mongo-init
 
 echo
 bash scripts/verify.sh

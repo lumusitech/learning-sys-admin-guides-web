@@ -116,11 +116,110 @@ services:
     networks:
       - db-lab
 
+  mongo1:
+    image: mongo:8.0
+    container_name: db-lab-mongo1
+    restart: unless-stopped
+    command:
+      - mongod
+      - --replSet
+      - rs0
+      - --bind_ip_all
+      - --port
+      - "27017"
+      - --maxConns
+      - "40"
+    ports:
+      - "57017:27017"
+    volumes:
+      - mongo1_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok' | grep -qx 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - db-lab
+
+  mongo2:
+    image: mongo:8.0
+    container_name: db-lab-mongo2
+    restart: unless-stopped
+    command:
+      - mongod
+      - --replSet
+      - rs0
+      - --bind_ip_all
+      - --port
+      - "27017"
+      - --maxConns
+      - "40"
+    ports:
+      - "57018:27017"
+    volumes:
+      - mongo2_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok' | grep -qx 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - db-lab
+
+  mongo3:
+    image: mongo:8.0
+    container_name: db-lab-mongo3
+    restart: unless-stopped
+    command:
+      - mongod
+      - --replSet
+      - rs0
+      - --bind_ip_all
+      - --port
+      - "27017"
+      - --maxConns
+      - "40"
+    ports:
+      - "57019:27017"
+    volumes:
+      - mongo3_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok' | grep -qx 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - db-lab
+
+  mongo-init:
+    image: mongo:8.0
+    profiles: ["init"]
+    restart: "no"
+    depends_on:
+      mongo1:
+        condition: service_healthy
+      mongo2:
+        condition: service_healthy
+      mongo3:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "/init.sh"]
+    volumes:
+      - ./mongo/init.sh:/init.sh:ro
+      - ./mongo/seed.js:/seed.js:ro
+    networks:
+      - db-lab
+
 volumes:
   pg_primary_data:
   pg_replica_data:
   mysql_data:
   redis_data:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
 
 networks:
   db-lab:

@@ -26,4 +26,5 @@ test('el laboratorio de bases de datos publica su compose', async ({ request }) 
   const body = await response.text();
   expect(body).toContain('postgres-primary');
   expect(body).toContain('redis');
+  expect(body).toContain('mongo1');
 });

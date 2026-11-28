@@ -2,6 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+MONGO_URI="mongodb://mongo1:27017,mongo2:27017,mongo3:27017/app?replicaSet=rs0"
+
 case "${1:-}" in
   01)
     echo "Escenario 01: agotar max_connections con pgbench..."
@@ -40,8 +42,35 @@ case "${1:-}" in
     echo "La tabla orders quedó vacía; el backup está en /tmp/app.dump."
     echo "Restaura con: ./scripts/reset.sh 06"
     ;;
+  07)
+    echo "Escenario 07: lanzar una consulta sin índice en MongoDB..."
+    docker compose exec -T mongo1 mongosh "$MONGO_URI" --quiet --eval '
+      const e = db.orders.find({ customer_email: "user199999@example.com" }).explain("executionStats");
+      printjson({
+        stage: e.queryPlanner.winningPlan.stage,
+        docsExamined: e.executionStats.totalDocsExamined,
+        nReturned: e.executionStats.nReturned,
+        ms: e.executionStats.executionTimeMillis
+      });
+    '
+    echo "Crea el índice con: ./scripts/mongo.sh --quiet --eval 'db.orders.createIndex({customer_email:1})'"
+    ;;
+  08)
+    echo "Escenario 08: agotar maxIncomingConnections con clientes mongosh..."
+    for _ in $(seq 1 30); do
+      docker compose exec -d mongo1 mongosh "$MONGO_URI" --quiet \
+        --eval 'sleep(600000)' >/dev/null 2>&1
+    done
+    echo "30 clientes lanzados contra un límite de 40 conexiones entrantes."
+    echo "Prueba una escritura con: ./scripts/mongo.sh --quiet --eval 'db.orders.insertOne({_id:\"connection-probe\", customer_email:\"probe@example.com\"})'"
+    ;;
+  09)
+    echo "Escenario 09: detener el secundario mongo2..."
+    docker compose stop mongo2
+    echo "mongo2 está detenido; el primario y mongo3 conservan la mayoría."
+    ;;
   *)
-    echo "Uso: $0 <01|02|03|04|05|06>" >&2
+    echo "Uso: $0 <01|02|03|04|05|06|07|08|09>" >&2
     exit 1
     ;;
 esac
