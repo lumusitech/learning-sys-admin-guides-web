@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-crash
+  namespace: k8s-lab
+  labels:
+    app: web-crash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-crash
+  template:
+    metadata:
+      labels:
+        app: web-crash
+    spec:
+      containers:
+        - name: app
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - >
+              echo "iniciando app";
+              sleep 2;
+              echo "fallo de configuracion: falta APP_MODE" >&2;
+              exit 1

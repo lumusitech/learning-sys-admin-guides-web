@@ -58,6 +58,8 @@ for (const file of markdownFiles(CONTENT)) {
       if (EXTERNAL.test(target)) continue;
 
       if (target.startsWith(`${BASE}labs/`)) {
+        // `/labs/kubernetes/` es una página de contenido, no un asset.
+        if (target.endsWith('/')) continue;
         checked += 1;
         const rel = decodeURIComponent(target.slice(BASE.length).split('#')[0]);
         if (!existsSync(join('public', rel))) {
