@@ -95,11 +95,13 @@ Después:
 
 Un solo comando clona el upstream (o usa un checkout local), copia solo las
 secciones publicables, reescribe los links a la base del sitio y refresca el
-allowlist:
+allowlist. Acepta `--section=<sección>` y `--skip-existing`; ignora README y
+archivos que empiezan con `_`:
 
 ```bash
-pnpm sync                     # clona el repo upstream en un temporal
-pnpm sync --source=../ruta    # usa un checkout local
+pnpm sync                              # clona el repo upstream en un temporal
+pnpm sync --source=../ruta             # usa un checkout local
+pnpm sync --section=guides --skip-existing
 ```
 
 `pnpm content <sourceDir>` sigue disponible para una copia manual. El allowlist
@@ -121,6 +123,7 @@ Tras importar una sección, `pnpm migrate:content --section=<sección>` aplica:
 - icono a `h1`/`h2` y al `title:` del frontmatter (con reglas por palabra clave);
 - español neutro según `docs/content-style.md`;
 - eliminación del índice manual `## 📑 Índice` (el índice vive en la topbar);
+- eliminación de back-links y enlaces a `README` de sección (el sitio tiene su navegación);
 - `> ⚠️ ...` → `:::callout{state=warning}`.
 
 Es una primera pasada determinista: revisa el diff y corre `pnpm verify`.

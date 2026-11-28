@@ -225,7 +225,8 @@ async function main() {
     // Solo secciones del sitio; fuera quedan README de sección, AGENTS.md,
     // .opencode/ y cualquier markdown que no sea contenido publicable.
     const section = sectionOf(relative);
-    if (!section || relative.endsWith('README.md')) {
+    const basename = path.posix.basename(relative);
+    if (!section || relative.endsWith('README.md') || basename.startsWith('_')) {
       ignored.push(relative);
       continue;
     }
