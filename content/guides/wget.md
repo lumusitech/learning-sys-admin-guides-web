@@ -50,7 +50,7 @@ Para un sysadmin, wget es la herramienta para:
 
 ## 🧠 Modelo mental
 
-Pensá en wget como **un camión de carga** para internet. Es robusto, no se rinde si la conexión es mala (reintenta), puede seguir rutas recursivas (mirror) y trabaja en background sin supervisión.
+Piensa en wget como **un camión de carga** para internet. Es robusto, no se rinde si la conexión es mala (reintenta), puede seguir rutas recursivas (mirror) y trabaja en background sin supervisión.
 
 `curl` es un auto deportivo: rápido, flexible, ideal para APIs y debugging. `wget` es un camión: lento pero confiable para descargas grandes y recursivas.
 

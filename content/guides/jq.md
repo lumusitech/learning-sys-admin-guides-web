@@ -47,7 +47,7 @@ En 2026, casi toda API, herramienta CLI (kubectl, aws, docker) y archivo de conf
 
 ## 🧠 Modelo mental
 
-Pensá en jq como **`awk` para JSON**:
+Piensa en jq como **`awk` para JSON**:
 
 - `jq '.'` = `cat` (mostrar todo)
 - `jq '.clave'` = `awk '{print $2}'` (extraer campo)

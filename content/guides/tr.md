@@ -51,7 +51,7 @@ Es ideal para:
 
 ## 🧠 Modelo mental
 
-Pensá en tr como un **filtro de café**. Le tiras texto sucio (con caracteres que no quieres) y sale texto limpio. No modifica el archivo original, solo transforma lo que pasa por el filtro.
+Piensa en tr como un **filtro de café**. Le tiras texto sucio (con caracteres que no quieres) y sale texto limpio. No modifica el archivo original, solo transforma lo que pasa por el filtro.
 
 Es como `sed` pero para operaciones carácter-por-carácter, no por líneas. Para transformaciones simples de caracteres, tr es más rápido y más simple que sed.
 

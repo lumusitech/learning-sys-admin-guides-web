@@ -51,7 +51,7 @@ Para el sysadmin, nc es la primera herramienta de diagnóstico de conectividad: 
 
 ## 🧠 Modelo mental
 
-Pensá en nc como un **walkie-talkie TCP**. Cuando ejecutas `nc host puerto`:
+Piensa en nc como un **walkie-talkie TCP**. Cuando ejecutas `nc host puerto`:
 
 - Si el puerto está abierto → se establece conexión, puedes "hablar" y "escuchar"
 - Si el puerto está cerrado o filtrado → conexión rechazada o timeout

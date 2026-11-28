@@ -50,7 +50,7 @@ Es más preciso que `ls -l` porque:
 
 ## 🧠 Modelo mental
 
-Pensá en stat como la **ficha médica del archivo**. Así como la ficha médica tiene talla, peso, fecha de nacimiento y última consulta, stat tiene tamaño, permisos, fecha de creación y última modificación.
+Piensa en stat como la **ficha médica del archivo**. Así como la ficha médica tiene talla, peso, fecha de nacimiento y última consulta, stat tiene tamaño, permisos, fecha de creación y última modificación.
 
 `ls -l` es como ver la etiqueta del paciente — superficial. `stat` es abrir la ficha completa.
 

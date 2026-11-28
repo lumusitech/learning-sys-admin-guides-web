@@ -32,13 +32,14 @@ const MARKERS = [
   'escribí', 'evitá', 'filtrá', 'pedí', 'capturá', 'aceptá', 'reducí', 'resolvé',
   'elevá', 'dejá', 'poné', 'hacé', 'andá', 'corré', 'probá', 'abrí', 'cerrá',
   'tené', 'vení', 'salí', 'largá', 'sacá', 'meté', 'tirá', 'agarrá', 'quedáte',
+  'limitá', 'rechazá', 'fallá', 'mantené',
   'fijate', 'acordate', 'olvidate', 'sentate', 'cuidate', 'dale', 'contame',
   'decime', 'pasame', 'hacelo', 'decile', 'andate',
   // pronombres y léxico regional
   'vos', 'acá', 'che', 'lindo', 'bárbaro', 'posta', 'laburo', 'guita',
 ];
 
-const PATTERN = new RegExp(`\\b(${MARKERS.join('|')})\\b`, 'iu');
+const PATTERN = new RegExp(`(?<![\\p{L}\\p{N}])(${MARKERS.join('|')})(?![\\p{L}\\p{N}])`, 'iu');
 
 function* walk(dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {

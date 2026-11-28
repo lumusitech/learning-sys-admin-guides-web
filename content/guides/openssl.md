@@ -51,7 +51,7 @@ Es la navaja suiza de la criptografía en terminal.
 
 ## 🧠 Modelo mental
 
-Pensá en openssl como **`curl` pero para la capa TLS**. Donde `curl` te dice qué devuelve el servidor HTTP, openssl te dice cómo se estableció la conexión segura: qué certificado presentó, qué cipher negoció, si la cadena de confianza es válida.
+Piensa en openssl como **`curl` pero para la capa TLS**. Donde `curl` te dice qué devuelve el servidor HTTP, openssl te dice cómo se estableció la conexión segura: qué certificado presentó, qué cipher negoció, si la cadena de confianza es válida.
 
 Si un servicio HTTPS falla, `curl` te da el error. `openssl s_client` te dice por qué.
 

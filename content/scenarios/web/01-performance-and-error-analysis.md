@@ -267,7 +267,7 @@ systemctl restart <servicio>        rc-service <servicio> restart
 apk add bc
 ```
 
-O usá `awk` directamente sin instalar nada:
+O usa `awk` directamente sin instalar nada:
 
 ```bash
 # echo "scale=2; $ERRORES*100/$TOTAL" | bc

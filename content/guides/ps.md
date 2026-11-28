@@ -28,7 +28,7 @@ meta:
 `ps aux`
 
 :::callout{state=warning label="Atención"}
-`ps aux` funciona en procps (Debian/Ubuntu). En Alpine/BusyBox usá `ps aux` (misma sintaxis) o `ps -eo pid,ppid,user,comm` para portabilidad máxima.
+`ps aux` funciona en procps (Debian/Ubuntu). En Alpine/BusyBox usa `ps aux` (misma sintaxis) o `ps -eo pid,ppid,user,comm` para portabilidad máxima.
 :::
 
 ---

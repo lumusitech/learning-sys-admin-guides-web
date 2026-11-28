@@ -261,7 +261,7 @@ From 10.0.0.1 icmp_seq=4 Destination Host Unreachable
 --- app-server ping statistics ---
 4 packets transmitted, 0 received, 100% packet loss, time 3062ms
 ```
-`Destination Host Unreachable` lo genera un router del camino: el host no responde ARP o la ruta no existe. **No** sigas con `curl` ni `nc`: primero resolvé capas 2/3 (host caído, interfaz, ruta o firewall).
+`Destination Host Unreachable` lo genera un router del camino: el host no responde ARP o la ruta no existe. **No** sigas con `curl` ni `nc`: primero resuelve capas 2/3 (host caído, interfaz, ruta o firewall).
 :::
 
 **Hipótesis descartada**: no es problema de red (ping rápido).

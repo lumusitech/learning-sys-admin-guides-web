@@ -269,7 +269,7 @@ ssh admin@192.168.100.100 "mkfs.ext4 /dev/sda1 && mount /dev/sda1 /mnt/sda"
 
 ## 🧪 Cómo practicarlo en el lab
 
-Usá el [laboratorio Docker Dahua](../../labs/docker-compose.dahua.yml) para simular los comandos del escenario contra una cámara y NVR virtualizados. Aplicá los pasos del procedimiento para diagnosticar cada caso.
+Usa el [laboratorio Docker Dahua](../../labs/docker-compose.dahua.yml) para simular los comandos del escenario contra una cámara y NVR virtualizados. Aplicá los pasos del procedimiento para diagnosticar cada caso.
 
 ---
 

@@ -183,8 +183,8 @@ awk '
 **Buenas prácticas:**
 
 - empezá con un umbral alto (ej. >=20)
-- aplicá primero 1 regla, verificá SSH, luego seguí
-- guardá rollback: `iptables -S > /root/iptables.backup.rules`
+- aplicá primero 1 regla, verifica SSH, luego seguí
+- guarda rollback: `iptables -S > /root/iptables.backup.rules`
 
 ### 2. Rollback (volver atrás)
 
@@ -268,7 +268,7 @@ grep "Accepted password" labs/auth.log | tail -20
 
 ### Ejercicio 1
 
-1. Sacá el top 5 de IPs con más fallos.
+1. Saca el top 5 de IPs con más fallos.
 2. Clasificá cada IP según severidad (leve/medio/alto).
 3. Proponé una mitigación y un rollback.
 

@@ -45,7 +45,7 @@ Esto lo hace mucho más eficiente que `scp` o `cp` para backups incrementales, m
 
 ## 🧠 Modelo mental
 
-Pensá en rsync como **`cp` con inteligencia**. Donde `cp -r` copia todo de nuevo cada vez (incluso lo que no cambió), rsync analiza ambos lados y solo transfiere lo que realmente cambió.
+Piensa en rsync como **`cp` con inteligencia**. Donde `cp -r` copia todo de nuevo cada vez (incluso lo que no cambió), rsync analiza ambos lados y solo transfiere lo que realmente cambió.
 
 Es como hacer `diff` entre dos directorios y aplicar solo los parches necesarios, en vez de reenviar todo el contenido.
 

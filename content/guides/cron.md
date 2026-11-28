@@ -365,7 +365,7 @@ crontab -r -i                                            # Borrar crontab con co
 - **Olvidar permisos de ejecución**. El script debe tener `chmod +x`. Si no, cron lo ejecuta pero falla con exit 126.
 - **Confundir `crontab -e` con editar `/etc/crontab`**. `crontab -e` es por usuario; `/etc/crontab` es del sistema y requiere formato con usuario.
 - **Asumir que el script tiene las mismas variables de entorno que el shell interactivo**. cron ejecuta con un entorno mínimo. Debuggear con `env > /tmp/cron-debug.log` al inicio del script.
-- **Poner `@reboot` esperando que funcione como systemd**. `@reboot` no soporta dependencias ni orden de arranque. Si necesitas garantías de orden, usá systemd timers.
+- **Poner `@reboot` esperando que funcione como systemd**. `@reboot` no soporta dependencias ni orden de arranque. Si necesitas garantías de orden, usa systemd timers.
 - **No verificar que el servicio cron esté corriendo**. Es la causa más simple y más pasada por alto.
 
 ---

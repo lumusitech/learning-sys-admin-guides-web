@@ -356,7 +356,7 @@ Crear script `/scripts/check.sh` que verifique:
 
 > ⏱️ 15-30 min | Sin referencias — aplicá lo aprendido
 
-Llega una alerta: "la app no responde". Diagnosticá y resolvé en menos de 15 minutos.
+Llega una alerta: "la app no responde". Diagnosticá y resuelve en menos de 15 minutos.
 
 ### Posibles incidentes (elegir uno)
 

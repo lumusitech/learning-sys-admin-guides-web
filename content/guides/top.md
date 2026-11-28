@@ -26,7 +26,7 @@ meta:
 `top -b -n 1 | head -20`
 
 :::callout{state=warning label="Atención"}
-`-b` y `-n` son de procps-ng (Ubuntu/Debian/macOS). En Alpine/BusyBox usá solo `top` o el fallback con `ps`.
+`-b` y `-n` son de procps-ng (Ubuntu/Debian/macOS). En Alpine/BusyBox usa solo `top` o el fallback con `ps`.
 :::
 
 ---
@@ -109,7 +109,7 @@ top - 14:23:01 up 3 days,  2:15,  3 users,  load average: 0.45, 0.30, 0.25
 
 **Regla de oro del Load Average:**
 
-- Si el load supera la cantidad de núcleos lógicos del servidor (verificá con `nproc`), el sistema está encolando tareas. Hay cuello de botella.
+- Si el load supera la cantidad de núcleos lógicos del servidor (verifica con `nproc`), el sistema está encolando tareas. Hay cuello de botella.
 - `load > nproc` sostenido → bottleneck confirmado.
 - Los 3 valores muestran la tendencia:
   - `1m > 5m > 15m` → carga creciente (alarma)
@@ -455,7 +455,7 @@ Eso son 7.5 núcleos ocupados. Casi un núcleo completo de un servidor de 8.
 
 ### 3. Esperar `-b` o `-n` en BusyBox/Alpine
 
-El `top` de BusyBox no soporta batch mode ni flags de iteración. En ese entorno, corré `top` interactivo o usá `ps` como alternativa:
+El `top` de BusyBox no soporta batch mode ni flags de iteración. En ese entorno, corre `top` interactivo o usa `ps` como alternativa:
 
 ```bash
 ps axo pid,pcpu,pmem,rss,vsz,comm --sort=-pcpu | head -10
@@ -473,7 +473,7 @@ uptime
 
 ### 5. Olvidar que `top` consume recursos
 
-En servidores con miles de procesos, `top` puede consumir CPU notablemente. Preferí `top -b -n 1` (una sola toma) en vez de dejarlo corriendo en interactivo. O usá `ps` para consultas rápidas.
+En servidores con miles de procesos, `top` puede consumir CPU notablemente. Preferí `top -b -n 1` (una sola toma) en vez de dejarlo corriendo en interactivo. O usa `ps` para consultas rápidas.
 
 ---
 
@@ -481,7 +481,7 @@ En servidores con miles de procesos, `top` puede consumir CPU notablemente. Pref
 
 ### 1. Usar `-o CAMPO` para ordenar en batch
 
-Evitá pipes con `sort` cuando puedas ordenar directamente con `-o`:
+Evita pipes con `sort` cuando puedas ordenar directamente con `-o`:
 
 ```bash
 # Bien
@@ -512,8 +512,8 @@ Nunca dejes `top -b` sin `-n` en un script. Vas a tener un loop infinito de sali
 
 - **Local (WSL2, macOS nativo) o SSH a servidor Ubuntu/Debian** → `top` completo de procps-ng. Funcionan todas las teclas interactivas (`1`, `c`, `M`, `P`, `e`/`E`) y los flags `-b -n -o`.
 - **SSH a servidor remoto Linux** → misma experiencia completa si es Linux estándar (Ubuntu, Debian, RHEL, CentOS).
-- **`docker exec -it <container> top` en Alpine** → solo BusyBox `top`. Sin `-b`, sin `-n`, sin teclas interactivas. Solo corré `top` directamente.
-- **Alternativa universal para entornos mínimos:** usá `ps`:
+- **`docker exec -it <container> top` en Alpine** → solo BusyBox `top`. Sin `-b`, sin `-n`, sin teclas interactivas. Solo corre `top` directamente.
+- **Alternativa universal para entornos mínimos:** usa `ps`:
 
   ```bash
   ps axo pid,pcpu,pmem,rss,comm --sort=-pcpu | head -10
