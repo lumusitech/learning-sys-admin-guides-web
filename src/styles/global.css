@@ -430,6 +430,10 @@ html[data-theme='dark'] .astro-code span {
   margin-block: 1.5rem;
   max-width: 100%;
   overflow-x: auto;
+  /* `overflow-x: auto` convertiría el wrapper en scroll container vertical y
+     rompería el `thead` sticky (se anclaría al wrapper, no a la página).
+     `clip` mantiene el scroll horizontal sin crear ese contenedor. */
+  overflow-y: clip;
   border: 1px solid var(--c-line);
   border-radius: 10px;
   -webkit-overflow-scrolling: touch;
@@ -444,7 +448,7 @@ html[data-theme='dark'] .astro-code span {
 
 .prose thead th {
   position: sticky;
-  top: 0;
+  top: 3.5rem; /* debajo de la topbar (h-14) */
   z-index: 1;
   background-color: var(--c-surface-2);
   text-align: left;
@@ -471,22 +475,18 @@ html[data-theme='dark'] .astro-code span {
   border-bottom: 0;
 }
 
-/* Primera columna sticky: en móvil mantiene el identificador visible */
+/* En móvil las tablas scrollean enteras: sin columna fija. La tabla larga
+   scrollea dentro de su caja y el header queda fijo arriba de la tabla (no
+   de la ventana), así la primera fila no queda tapada. */
 @media (max-width: 767px) {
-  .prose thead th:first-child,
-  .prose tbody td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background-color: var(--c-bg);
-    border-right: 1px solid var(--c-line);
-    font-weight: 600;
-    white-space: nowrap;
+  .table-wrap {
+    max-height: 70vh;
+    overflow: auto;
   }
 
-  .prose thead th:first-child {
-    background-color: var(--c-surface-2);
-    z-index: 3;
+  .prose thead th {
+    top: 0;
+    white-space: normal;
   }
 }
 
