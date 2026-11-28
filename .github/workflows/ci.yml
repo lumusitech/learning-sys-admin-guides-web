@@ -36,6 +36,9 @@ jobs:
       - name: Lint de contenido
         run: pnpm lint:content
 
+      - name: Lint de assets de labs
+        run: pnpm lint:assets
+
   test:
     runs-on: ubuntu-latest
     steps:

@@ -44,9 +44,11 @@ scripts/                 Lints y utilidades de contenido (Node, .mjs)
   lint-icons.mjs         Iconos en títulos y frontmatter
   lint-language.mjs      Español neutro (sin voseo)
   lint-content.mjs       Frontmatter, links internos y anclas
+  lint-assets.mjs        Links a assets de labs que existen en public/labs
   new-guide.mjs          Scaffolder de documentos
-  migrate-content.mjs    Migra iconos, idioma, índices y callouts
+  migrate-content.mjs    Migra iconos, idioma, índices, assets y callouts
   sync-allowlist.mjs     Regenera pending-sync.json desde el repo upstream
+  sync-labs-assets.mjs   Copia los assets de labs del upstream a public/labs
   sync-content.mjs       Clona/usa upstream y sincroniza todo en un paso
   build-search-index.mjs Genera public/search-index.json
   prepare-content.mjs    Copia markdown upstream y refresca el allowlist
@@ -107,10 +109,14 @@ pnpm sync --section=guides --skip-existing
 `pnpm content <sourceDir>` sigue disponible para una copia manual. El allowlist
 también se regenera solo con `pnpm sync:allowlist <sourceDir>`.
 
-`labs` es la excepción: upstream solo tiene un `README.md` con los ejercicios y
-assets que no se publican. Se publica como `content/labs/laboratorio-docker.md`;
-si cambia, se reimporta con una copia explícita (en importaciones parciales el
-allowlist no se toca).
+`labs` es especial: upstream tiene un `README.md` que se publica como
+`content/labs/laboratorio-docker.md` y 67 assets (docker-compose, scripts,
+logs). Los assets se copian a `public/labs` con `pnpm sync:labs <sourceDir>`
+(`pnpm sync` lo hace en un sync completo o de `labs`).
+
+`pnpm lint:assets` valida que cada link a `${BASE}labs/...` resuelva a un
+archivo de `public/labs`; `pnpm sync:labs --check --source=<dir>` compara
+hashes con el upstream y detecta drift (también corre en el workflow semanal).
 
 `scripts/pending-sync.json` es un snapshot determinista de los ids que existen
 upstream (sin README ni archivos de raíz). Se commitea para que CI —sin acceso
@@ -140,6 +146,7 @@ Es una primera pasada determinista: revisa el diff y corre `pnpm verify`.
 | `pnpm lint:icons` | Título de página y `h2` con icono del set (h3+ opcional) |
 | `pnpm lint:language` | Español neutro (sin voseo ni regionalismos) |
 | `pnpm lint:content` | Frontmatter, links internos, anclas y allowlist de sync |
+| `pnpm lint:assets` | Links a assets de labs que existen en `public/labs` |
 | `pnpm check` | Tipos (Astro + TS strict) |
 | `pnpm test` | Unitarios (Vitest) |
 | `pnpm test:e2e` | E2E, accesibilidad (axe) y presupuestos de CSS/JS |
@@ -160,7 +167,7 @@ Las anclas se validan contra `dist/`, así que `lint:content` debe correr tras
 
 `.github/workflows/ci.yml` tiene dos jobs:
 
-- **verify:** `lint:icons`, `lint:language`, `check`, `build` y `lint:content`.
+- **verify:** `lint:icons`, `lint:language`, `check`, `build`, `lint:content` y `lint:assets`.
 - **test:** instala Chromium y corre `pnpm test:all` (unitarios + e2e, que
   incluyen axe y presupuestos).
 

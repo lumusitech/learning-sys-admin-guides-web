@@ -1,8 +1,8 @@
 name: Sync allowlist
 
-# Detecta drift entre el allowlist commiteado y el repo upstream.
-# No abre PRs de contenido: la importación se revisa aparte porque requiere
-# migración de iconos, idioma y cabeceras.
+# Detecta drift entre el allowlist y los assets de labs commiteados y el
+# repo upstream. No abre PRs de contenido: la importación se revisa aparte
+# porque requiere migración de iconos, idioma y cabeceras.
 
 on:
   schedule:
@@ -33,6 +33,9 @@ jobs:
 
       - name: Regenerar allowlist
         run: pnpm sync:allowlist /tmp/upstream
+
+      - name: Verificar assets de labs
+        run: pnpm sync:labs --check --source=/tmp/upstream
 
       - name: Fallar si el allowlist quedó desactualizado
         run: |
